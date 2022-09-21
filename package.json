@@ -1,0 +1,26 @@
+{
+  "name": "rental-project",
+  "version": "1.0.0",
+  "description": "rental-project for master thesis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asopi/rental-project.git"
+  },
+  "keywords": [
+    "nft",
+    "rental"
+  ],
+  "author": "Alfred Sopi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/asopi/rental-project/issues"
+  },
+  "homepage": "https://github.com/asopi/rental-project#readme",
+  "devDependencies": {
+    "hardhat": "^2.11.2"
+  }
+}
