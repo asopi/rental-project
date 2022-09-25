@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { IERC20 } from './../typechain-types/@openzeppelin/contracts/token/ERC20/IERC20';
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 describe('Rental', () => {
     let rental: any;
@@ -12,6 +13,7 @@ describe('Rental', () => {
     let lender: SignerWithAddress;
     let renter: SignerWithAddress;
     let nftId = 1;
+    const DAY_IN_SECONDS = 86400;
 
 
     beforeEach(async () => {
@@ -71,6 +73,49 @@ describe('Rental', () => {
     describe('Deployer', () => {
         it('should set implementer', async () => {
             expect(await rental.implementer()).to.equal(implementer.address);
+        });
+    });
+
+    describe('Implementer', () => {
+        it('should execute increaseCount', async () => {
+            await rental.connect(implementer).increaseCount(
+                nft.address,
+                nftId
+            );
+            const rentOrderIncreased = await rental.getOrder(
+                nft.address,
+                nftId
+            );
+            expect(rentOrderIncreased._count).to.equal(1);
+        });
+
+        it('should execute increaseCount transaction until maxcount is reached', async () => {
+            for (let i = 0; i <= 10; i++) {
+                await rental.connect(implementer).increaseCount(
+                    nft.address,
+                    nftId
+                );
+            }
+            await expect(rental.connect(implementer).increaseCount(
+                nft.address,
+                nftId
+            )).to.be.revertedWith(
+                "max count is reached"
+            );
+        });
+
+        it('should not execute increaseCount when order is expired', async () => {
+            let order = await rental.getOrder(
+                nft.address,
+                nftId
+            );
+            await time.increaseTo(order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1);
+            await expect(rental.connect(implementer).increaseCount(
+                nft.address,
+                nftId
+            )).to.be.revertedWith(
+                "rent duration exceeded"
+            );
         });
     });
 

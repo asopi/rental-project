@@ -13,6 +13,15 @@ contract Rental is IRental {
     mapping(bytes32 => Order) public orders;
     address public implementer;
     IERC20 public token;
+    uint256 private constant DAY_IN_SECONDS = 86400;
+
+    modifier onlyImplementer() {
+        require(
+            msg.sender == implementer,
+            "only implementer can call this method"
+        );
+        _;
+    }
 
     constructor(address _implementer, address _token) {
         implementer = _implementer;
@@ -73,8 +82,18 @@ contract Rental is IRental {
         // TODO: to be implemented
     }
 
-    function increaseCount(address _nftAddress, uint256 _nftId) external {
-        // TODO: to be implemented
+    function increaseCount(address _nftAddress, uint256 _nftId)
+        external
+        onlyImplementer
+    {
+        Order storage order = orders[id(_nftAddress, _nftId)];
+        require(order._count <= order._maxCount, "max count is reached");
+        require(
+            order._rentedAt + order._duration * DAY_IN_SECONDS >
+                uint32(block.timestamp),
+            "rent duration exceeded"
+        );
+        order._count++;
     }
 
     function getOrder(address _nftAddress, uint256 _nftId)
