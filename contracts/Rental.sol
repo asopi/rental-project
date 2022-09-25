@@ -67,11 +67,19 @@ contract Rental is IRental {
     }
 
     function stopRent(address _nftAddress, uint256 _nftId) external {
-        // TODO: to be implemented
+        bytes32 orderId = id(_nftAddress, _nftId);
+        Order storage order = orders[orderId];
+        require(order._duration != 0, "order already stopped");
+        require(msg.sender == order._renter, "only renter can stop this order");
+        order._duration = 0;
     }
 
     function stopLend(address _nftAddress, uint256 _nftId) external {
-        // TODO: to be implemented
+        bytes32 orderId = id(_nftAddress, _nftId);
+        Order storage order = orders[orderId];
+        require(order._lender == msg.sender, "only lender can stop this order");
+        require(order._renter == address(0), "order already rented");
+        delete orders[orderId];
     }
 
     function claimFund(address _nftAddress, uint256 _nftId) external {
