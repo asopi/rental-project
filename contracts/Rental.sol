@@ -56,13 +56,16 @@ contract Rental is IRental {
         uint256 _duration,
         uint256 _maxCount
     ) external payable {
-        // TODO: check if order is already rented and if sender has enough balance
+        require(_duration > 0, "duration is <= 0");
+        require(_maxCount > 0, "maxCount is <= 0");
         Order storage order = orders[id(_nftAddress, _nftId)];
+        require(order._renter == address(0), "order already rented");
         order._renter = payable(msg.sender);
         order._duration = _duration;
         order._maxCount = _maxCount;
         order._rentedAt = uint32(block.timestamp);
         uint256 maxPrice = order._maxCount * order._countPrice;
+        require(address(msg.sender).balance > maxPrice, "not enough balance");
         token.safeTransferFrom(msg.sender, address(this), maxPrice);
     }
 

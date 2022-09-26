@@ -137,6 +137,17 @@ describe('Rental', () => {
             expect(order._renter).to.equal(renter.address);
         });
 
+        it('should not execute rent transaction when nft is already rented', async () => {
+            await expect(rental.connect(renter).rent(
+                nft.address,
+                nftId,
+                12,
+                10
+            )).to.be.revertedWith(
+                "order already rented"
+            );
+        });
+
         it('should not execute increaseCount', async () => {
             await expect(rental.connect(renter).increaseCount(
                 nft.address,
@@ -198,6 +209,17 @@ describe('Rental', () => {
                 nextNftId
             );
             expect(order._lender).to.equal(lender.address);
+        });
+
+        it('should not execute lend transaction when nft is already lended', async () => {
+            await expect(rental.connect(lender).lend(
+                nft.address,
+                nftId,
+                12,
+                10
+            )).to.be.revertedWith(
+                "ERC721: transfer from incorrect owner"
+            );
         });
 
         it('should not execute increaseCount', async () => {
