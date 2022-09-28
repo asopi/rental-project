@@ -1,0 +1,16 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <div class="title">
+      <h1>Rental Project</h1>
+    </div>
+    <div>
+      <a mat-button [routerLink]="'/marketplace'" routerLinkActive="active"> Marketplace</a>
+      <a mat-button [routerLink]="'/lending'" routerLinkActive="active">Lend</a>
+      <a mat-button [routerLink]="'/renting'" routerLinkActive="active">Rent</a>
+    </div>
+    <span class="spacer"></span>
+    <div>
+      <button mat-raised-button>Connect</button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
