@@ -74,6 +74,10 @@ describe('Rental', () => {
         it('should set implementer', async () => {
             expect(await rental.implementer()).to.equal(implementer.address);
         });
+
+        it('should set Rental Smart Contract to be NFT owner', async () => {
+            expect(await nft.ownerOf(nftId)).to.equal(rental.address);
+        });
     });
 
     describe('Implementer', () => {
@@ -191,6 +195,43 @@ describe('Rental', () => {
             );
         });
 
+        it('should claim refund when order is stopped', async () => {
+            for (let i = 0; i <= 6; i++) {
+                await rental.connect(implementer).increaseCount(
+                    nft.address,
+                    nftId
+                );
+            }
+            await rental.connect(renter).stopRent(
+                nft.address,
+                nftId
+            );
+
+            await rental.connect(renter).claimRefund(nft.address, nftId);
+            // TODO: expect balance check
+        });
+
+        it('should claim refund when order is expired', async () => {
+            let order = await rental.getOrder(
+                nft.address,
+                nftId
+            );
+            await time.increaseTo(order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1);
+            await rental.connect(renter).claimRefund(nft.address, nftId);
+            // TODO: expect balance check
+        });
+
+        it('should not claim refund when order is not expired', async () => {
+            await expect(rental.connect(renter).claimRefund(nft.address, nftId)).to.be.revertedWith(
+                "rent duration not exceeded"
+            );
+        });
+
+        it('should not claim refund when calles is not renter', async () => {
+            await expect(rental.connect(lender).claimRefund(nft.address, nftId)).to.be.revertedWith(
+                "only renter can claim refunds from this order"
+            );
+        });
     });
 
     describe('Lender', () => {
@@ -267,6 +308,45 @@ describe('Rental', () => {
                 nftId
             )).to.be.revertedWith(
                 "order already rented"
+            );
+        });
+
+        it('should claim fund and nft when order is stopped', async () => {
+            for (let i = 0; i <= 6; i++) {
+                await rental.connect(implementer).increaseCount(
+                    nft.address,
+                    nftId
+                );
+            }
+            await rental.connect(renter).stopRent(
+                nft.address,
+                nftId
+            );
+            await rental.connect(lender).claimFund(nft.address, nftId);
+
+            // TODO: expect balance check
+            expect(await nft.ownerOf(nftId)).to.equal(lender.address);
+        });
+
+        it('should claim fund and nft when order is expired', async () => {
+            let order = await rental.getOrder(
+                nft.address,
+                nftId
+            );
+            await time.increaseTo(order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1);
+            await rental.connect(lender).claimFund(nft.address, nftId);
+            // TODO: check balance
+        });
+
+        it('should not claim fund and nft when order is not stopped or expired', async () => {
+            await expect(rental.connect(lender).claimFund(nft.address, nftId)).to.be.revertedWith(
+                "rent duration not exceeded"
+            );
+        });
+
+        it('should not claim fund and nft when caller is not lender', async () => {
+            await expect(rental.connect(renter).claimFund(nft.address, nftId)).to.be.revertedWith(
+                "only lender can claim the funds and nft from this order"
             );
         });
     });

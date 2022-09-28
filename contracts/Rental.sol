@@ -86,11 +86,37 @@ contract Rental is IRental {
     }
 
     function claimFund(address _nftAddress, uint256 _nftId) external {
-        // TODO: to be implemented
+        Order storage order = orders[id(_nftAddress, _nftId)];
+        require(
+            msg.sender == order._lender,
+            "only lender can claim the funds and nft from this order"
+        );
+        require(
+            order._rentedAt + order._duration * DAY_IN_SECONDS <=
+                uint32(block.timestamp),
+            "rent duration not exceeded"
+        );
+        uint256 fund = order._count * order._countPrice;
+        token.safeTransfer(msg.sender, fund);
+        IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
     }
 
     function claimRefund(address _nftAddress, uint256 _nftId) external {
-        // TODO: to be implemented
+        Order storage order = orders[id(_nftAddress, _nftId)];
+        require(
+            msg.sender == order._renter,
+            "only renter can claim refunds from this order"
+        );
+        require(
+            order._rentedAt + order._duration * DAY_IN_SECONDS <=
+                uint32(block.timestamp),
+            "rent duration not exceeded"
+        );
+        uint256 refund = order._maxCount *
+            order._countPrice -
+            order._count *
+            order._countPrice;
+        token.safeTransfer(msg.sender, refund);
     }
 
     function increaseCount(address _nftAddress, uint256 _nftId)
