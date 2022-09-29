@@ -3,6 +3,7 @@ coverage
 coverage.json
 typechain
 typechain-types
+ipfs
 
 #Hardhat files
 cache
