@@ -10,7 +10,12 @@
     </div>
     <span class="spacer"></span>
     <div>
-      <button mat-raised-button>Connect</button>
+      <button mat-raised-button (click)="connect()" *ngIf="(user$ | async) === null">Connect</button>
+      <button mat-button matTooltip="Copy address" [cdkCopyToClipboard]="user$ | async"
+        [cdkCopyToClipboardAttempts]="5">
+        {{ user$ | async | formatAddress }}
+      </button>
+      <button mat-raised-button (click)="disconnect()" *ngIf="(user$ | async) !== null">Disconnect</button>
     </div>
   </mat-toolbar-row>
 </mat-toolbar>

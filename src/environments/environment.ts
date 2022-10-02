@@ -3,7 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  INFURA_ID: '95806538cd7f4cf0b78d319b4662b012'
 };
 
 /*

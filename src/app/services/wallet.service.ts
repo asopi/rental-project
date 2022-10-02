@@ -1,41 +1,55 @@
+import Web3Modal from 'web3modal';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-
-import { NFT } from '../models/wallet.model';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Subject } from 'rxjs';
+import Web3 from 'web3';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WalletService {
+  private web3js!: Web3;
+  private provider: any;
+  private accounts!: string[];
+  private web3Modal!: Web3Modal;
+
+  private walletSubject = new Subject<any>();
+  public wallet$ = this.walletSubject.asObservable();
+
   constructor() { }
 
-  // TODO: remove mock data
-  public getNfts(): Observable<NFT[]> {
-    return of([
-      {
-        name: "Queen Elizabeth NFT",
-        description: "Wonderfull portrait of Queen Elizabeth",
-        image: "https://ipfs.io/ipfs/QmVDeVyDnCmXCFQTbgbc5TW8VGjMtfCVDg7bUhwRhjADNr",
-        contractAddress: "0x000..1",
-        tokenId: "1",
-        tokenUri: "https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1"
-      },
-      {
-        name: "Artistic NFT",
-        description: "Creativity knows no end",
-        image: "https://ipfs.io/ipfs/QmVDeVyDnCmXCFQTbgbc5TW8VGjMtfCVDg7bUhwRhjADNr",
-        contractAddress: "0x000..3",
-        tokenId: "1",
-        tokenUri: "https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1"
-      },
-      {
-        name: "3D Art NFT",
-        description: "Art in three dimensions",
-        image: "https://ipfs.io/ipfs/QmVDeVyDnCmXCFQTbgbc5TW8VGjMtfCVDg7bUhwRhjADNr",
-        contractAddress: "0x000..3",
-        tokenId: "3",
-        tokenUri: "https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1"
+  public async connect(): Promise<void> {
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          infuraId: environment.INFURA_ID
+        }
       }
-    ]);
+    };
+    this.web3Modal = new Web3Modal({
+      network: "mainnet",
+      cacheProvider: true,
+      providerOptions,
+      theme: {
+        background: "rgb(39, 49, 56)",
+        main: "rgb(199, 199, 199)",
+        secondary: "rgb(136, 136, 136)",
+        border: "rgba(195, 195, 195, 0.14)",
+        hover: "rgb(16, 26, 32)"
+      }
+    });
+    this.web3Modal.clearCachedProvider();
+
+    this.provider = await this.web3Modal.connect();
+    this.web3js = new Web3(this.provider);
+    this.accounts = await this.web3js.eth.getAccounts();
+    this.walletSubject.next(this.accounts[0]);
+  }
+
+  public async disconnect(): Promise<void> {
+    this.web3Modal.clearCachedProvider();
+    this.walletSubject.next(null);
   }
 }
