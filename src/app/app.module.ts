@@ -6,10 +6,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxJdenticonModule } from 'ngx-jdenticon';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -42,7 +43,8 @@ import { FormatAddressPipe } from './pipes/format-address.pipe';
     MatCardModule,
     MatGridListModule,
     ClipboardModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgxJdenticonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

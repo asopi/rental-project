@@ -9,10 +9,12 @@
       <a mat-button [routerLink]="'/renting'" routerLinkActive="active">Renting</a>
     </div>
     <span class="spacer"></span>
-    <div>
+    <div class="user-section">
+
       <button mat-raised-button (click)="connect()" *ngIf="(user$ | async) === null">Connect</button>
-      <button mat-button matTooltip="Copy address" [cdkCopyToClipboard]="user$ | async"
-        [cdkCopyToClipboardAttempts]="5">
+      <button mat-button matTooltip="Copy address" [class.hidden]="(user$ | async) === null"
+        [cdkCopyToClipboard]="user$ | async" [cdkCopyToClipboardAttempts]="5">
+        <svg class="identicon" width="36" height="36" [data-jdenticon-value]="user$ | async"></svg>
         {{ user$ | async | formatAddress }}
       </button>
       <button mat-raised-button (click)="disconnect()" *ngIf="(user$ | async) !== null">Disconnect</button>

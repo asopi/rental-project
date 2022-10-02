@@ -21,6 +21,7 @@ export class ShowroomComponent {
   public convertNftToCard(nfts: NFT[]): Card[] {
     return nfts.map(nft => {
       return {
+        identity: nft.contractAddress,
         title: nft.name,
         subtitle: nft.description,
         image: nft.image,

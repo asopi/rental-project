@@ -60,6 +60,8 @@
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
     "@openzeppelin/contracts": "^4.7.3",
+    "jdenticon": "^3.2.0",
+    "ngx-jdenticon": "^1.0.4",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "walletconnect": "^1.7.8",
