@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 import { Card } from 'src/app/models/card.model';
 import { NFT } from 'src/app/models/wallet.model';
 
@@ -12,8 +12,7 @@ import { RentalService } from './../../services/rental.service';
 })
 export class ShowroomComponent {
 
-  public nftCards$: Observable<Card[]> = this.rentalService
-    .getNfts()
+  public nftCards$: Observable<Card[]> = from(this.rentalService.loadMyNft())
     .pipe(map(this.convertNftToCard));
 
   constructor(private readonly rentalService: RentalService) { }
@@ -21,7 +20,7 @@ export class ShowroomComponent {
   public convertNftToCard(nfts: NFT[]): Card[] {
     return nfts.map(nft => {
       return {
-        identity: nft.contractAddress,
+        identity: nft.ownerAddress,
         title: nft.name,
         subtitle: nft.description,
         image: nft.image,

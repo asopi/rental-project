@@ -1,41 +1,50 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { NFT } from '../models/wallet.model';
+import { environment } from './../../environments/environment';
 
+import { Injectable } from '@angular/core';
+import { Observable, of, map } from 'rxjs';
+import { NFT } from '../models/wallet.model';
+import { WalletService } from './wallet.service';
+import Moralis from 'moralis';
+import { EvmChain } from '@moralisweb3/evm-utils';
 @Injectable({
   providedIn: 'root'
 })
 export class RentalService {
 
-  constructor() { }
+  constructor(private readonly walletService: WalletService) {
+  }
 
-  // TODO: remove mock data
-  public getNfts(): Observable<NFT[]> {
-    return of([
-      {
-        name: "Queen Elizabeth NFT",
-        description: "Wonderfull portrait of Queen Elizabeth",
-        image: "https://ipfs.io/ipfs/QmVDeVyDnCmXCFQTbgbc5TW8VGjMtfCVDg7bUhwRhjADNr",
-        contractAddress: "0xAD82da41D7a718ce9F49d33B6A4417C382348503",
-        tokenId: "1",
-        tokenUri: "https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1"
-      },
-      {
-        name: "Artistic NFT",
-        description: "Creativity knows no end",
-        image: "https://ipfs.io/ipfs/QmVDeVyDnCmXCFQTbgbc5TW8VGjMtfCVDg7bUhwRhjADNr",
-        contractAddress: "0x2312da41D7a718ce9F49d33B631237C38236668",
-        tokenId: "1",
-        tokenUri: "https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1"
-      },
-      {
-        name: "3D Art NFT",
-        description: "Art in three dimensions",
-        image: "https://ipfs.io/ipfs/QmVDeVyDnCmXCFQTbgbc5TW8VGjMtfCVDg7bUhwRhjADNr",
-        contractAddress: "0xFE4241D7a718ce9F49d33B6A4417C382349753",
-        tokenId: "3",
-        tokenUri: "https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1"
-      }
-    ]);
+  async loadMyNft(): Promise<NFT[]> {
+    await Moralis.start({
+      apiKey: environment.MORALIS_API_KEY,
+    });
+    const address = this.walletService.address;
+    const chain = EvmChain.ETHEREUM;
+    const response = await Moralis.EvmApi.nft.getWalletNFTs({
+      address,
+      chain,
+    });
+    const nfts = response.result.map(evmNft => evmNft.metadata);
+    return nfts.filter(next => next != null).map((next: any) => {
+      return {
+        name: next?.name,
+        description: next?.description,
+        image: this.addIPFSProxy(next?.image),
+        ownerAddress: address,
+      };
+    });
+  }
+
+  addIPFSProxy(ipfsHash: string) {
+    const URL = "https://ipfs.io/ipfs/";
+    const ipfsRegex = /^ipfs?:\/\//;
+    const httpsIpfsRegex = /^https?:\/\/ipfs.io/;
+    let ipfsURL = ipfsHash;
+    if (ipfsHash.match(ipfsRegex)) {
+      ipfsURL = URL + ipfsHash.replace(ipfsRegex, '');
+    } else if (ipfsHash.match(httpsIpfsRegex)) {
+      ipfsURL = URL + ipfsHash.replace(httpsIpfsRegex, '');
+    }
+    return ipfsURL;
   }
 }

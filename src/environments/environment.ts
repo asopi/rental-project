@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  INFURA_ID: '95806538cd7f4cf0b78d319b4662b012'
+  INFURA_ID: '95806538cd7f4cf0b78d319b4662b012',
+  MORALIS_API_KEY: 'IPwR7RUgx5UCHEm0g45MfjmJLgG5PkdHagUoG9T0pvZwwINgGqvdZ8c68SeEOPDF'
 };
 
 /*
