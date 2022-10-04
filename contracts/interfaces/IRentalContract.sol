@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: UNLICENSED
+//SPDX-License-Identifier: AFL-3.0
 pragma solidity ^0.8.9;
 
-interface IRental {
+interface IRentalContract {
     function lend(
         address _nftAddress,
         uint256 _nftId,

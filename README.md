@@ -1,13 +1,20 @@
 # Rental Project
-## Contract
 This project is for my master thesis.
+## Contract
 
-Some commands:
+### Deployment 
+
+#### 
 ```shell
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+// Goerli Test Network
+npm run deploy-goerli 
+or
+npx hardhat run scripts/deploy.ts --network goerli
+```
+
+### Verification
+```shell
+npx hardhat verify --network goerli <contract address> <deployer address> <token address>
 ```
 
 ## Frontend

@@ -8,7 +8,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy-goerli": "npx hardhat run scripts/deploy-goerli.ts --network goerli "
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
+    "dotenv": "^16.0.3",
     "hardhat": "^2.11.2",
     "https-browserify": "^1.0.0",
     "jasmine-core": "~4.3.0",
