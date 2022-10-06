@@ -1,7 +1,7 @@
 import Web3Modal from 'web3modal';
 import { Injectable } from '@angular/core';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Subject, tap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import Web3 from 'web3';
 import { environment } from 'src/environments/environment';
 
@@ -14,14 +14,12 @@ export class WalletService {
   private accounts!: string[];
   private web3Modal!: Web3Modal;
 
-  private walletSubject = new Subject<any>();
-  public address!: string;
-  public wallet$ = this.walletSubject.asObservable()
-    .pipe(tap(next => this.address = next));
+  private walletSubject = new BehaviorSubject<any>(sessionStorage.getItem("walletAddress") ?? '');
+  public account$ = this.walletSubject.asObservable();
 
   constructor() { }
 
-  public async connect(): Promise<void> {
+  public async init(): Promise<void> {
     const providerOptions = {
       walletconnect: {
         package: WalletConnectProvider,
@@ -43,15 +41,20 @@ export class WalletService {
       }
     });
     this.web3Modal.clearCachedProvider();
+  }
 
+  public async connect(): Promise<void> {
     this.provider = await this.web3Modal.connect();
     this.web3 = new Web3(this.provider);
     this.accounts = await this.web3.eth.getAccounts();
-    this.walletSubject.next(this.accounts[0]);
+    const account = this.accounts[0];
+    this.walletSubject.next(account);
+    sessionStorage.setItem("walletAddress", account);
   }
 
   public async disconnect(): Promise<void> {
     this.web3Modal.clearCachedProvider();
-    this.walletSubject.next(null);
+    this.walletSubject.next('');
+    sessionStorage.removeItem("walletAddress");
   }
 }

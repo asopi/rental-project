@@ -12,7 +12,7 @@ import { RentalService } from './../../services/rental.service';
 })
 export class ShowroomComponent {
 
-  public nftCards$: Observable<Card[]> = from(this.rentalService.loadMyNft())
+  public nftCards$: Observable<Card[]> = this.rentalService.loadContractNfts()
     .pipe(map(this.convertNftToCard));
 
   constructor(private readonly rentalService: RentalService) { }

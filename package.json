@@ -9,7 +9,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy-goerli": "npx hardhat run scripts/deploy-goerli.ts --network goerli "
+    "deploy-goerli": "npx hardhat run scripts/deploy-goerli.ts --network goerli",
+    "mint-goerli": "npx hardhat run scripts/mint-goerli.ts --network goerli"
   },
   "repository": {
     "type": "git",

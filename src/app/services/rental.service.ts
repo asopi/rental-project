@@ -1,50 +1,64 @@
-import { environment } from './../../environments/environment';
-
 import { Injectable } from '@angular/core';
-import { Observable, of, map } from 'rxjs';
-import { NFT } from '../models/wallet.model';
-import { WalletService } from './wallet.service';
-import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/evm-utils';
+import Moralis from 'moralis';
+import { from, map, Observable, of, switchMap } from 'rxjs';
+
+import { NFT } from '../models/wallet.model';
+import { environment } from './../../environments/environment';
+import { WalletService } from './wallet.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class RentalService {
 
   constructor(private readonly walletService: WalletService) {
-  }
-
-  async loadMyNft(): Promise<NFT[]> {
-    await Moralis.start({
+    Moralis.start({
       apiKey: environment.MORALIS_API_KEY,
     });
-    const address = this.walletService.address;
-    const chain = EvmChain.ETHEREUM;
-    const response = await Moralis.EvmApi.nft.getWalletNFTs({
-      address,
-      chain,
-    });
-    const nfts = response.result.map(evmNft => evmNft.metadata);
-    return nfts.filter(next => next != null).map((next: any) => {
-      return {
-        name: next?.name,
-        description: next?.description,
-        image: this.addIPFSProxy(next?.image),
-        ownerAddress: address,
-      };
-    });
   }
 
-  addIPFSProxy(ipfsHash: string) {
-    const URL = "https://ipfs.io/ipfs/";
+  public loadAccountNfts(): Observable<NFT[]> {
+    return this.walletService.account$.pipe(
+      switchMap(account => this.loadNfts(account))
+    );
+  }
+
+  public loadContractNfts(): Observable<NFT[]> {
+    return this.loadNfts(environment.RENTAL_CONTRACT);
+  }
+
+  private loadNfts(address: string): Observable<NFT[]> {
+    return address !== '' ? from(Moralis.EvmApi.nft.getWalletNFTs({
+      address,
+      chain: EvmChain.GOERLI,
+    })).pipe(
+      map(next => next.result.map(evmNft => evmNft.metadata)),
+      map(next => next.filter(next => next != null)?.map((nft: any) => {
+        return {
+          name: nft?.name,
+          description: nft?.description,
+          image: this.addIPFSProxy(nft?.image),
+          ownerAddress: address,
+        };
+      }))
+    ) : of([]);
+  }
+
+  private addIPFSProxy(ipfsHash: string): string {
+    const url = "https://ipfs.io/ipfs/";
     const ipfsRegex = /^ipfs?:\/\//;
-    const httpsIpfsRegex = /^https?:\/\/ipfs.io/;
-    let ipfsURL = ipfsHash;
+    const ipfsUrlRegex = /^ipfs?:\/\/ipfs.io\/ipfs\//;
+    const httpsIpfsRegex = /^https?:\/\/ipfs.io\/ipfs\//;
+
     if (ipfsHash.match(ipfsRegex)) {
-      ipfsURL = URL + ipfsHash.replace(ipfsRegex, '');
+      return url + ipfsHash.replace(ipfsRegex, '');
     } else if (ipfsHash.match(httpsIpfsRegex)) {
-      ipfsURL = URL + ipfsHash.replace(httpsIpfsRegex, '');
+      return url + ipfsHash.replace(httpsIpfsRegex, '');
+    } else if (ipfsHash.match(ipfsUrlRegex)) {
+      return url + ipfsHash.replace(ipfsUrlRegex, '');;
+    } else {
+      return ipfsHash;
     }
-    return ipfsURL;
   }
 }

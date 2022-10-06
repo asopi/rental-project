@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Component } from '@angular/core';
 
 import { WalletService } from './../../services/wallet.service';
@@ -8,9 +9,9 @@ import { WalletService } from './../../services/wallet.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  user$ = this.walletService.wallet$;
-  constructor(private readonly walletService: WalletService) { }
+  public wallet$ = this.walletService.account$;
 
+  constructor(private readonly walletService: WalletService) { }
 
   public connect(): void {
     this.walletService.connect();

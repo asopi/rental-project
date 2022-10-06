@@ -10,14 +10,12 @@ import { NFT } from './../../models/wallet.model';
   templateUrl: './renting.component.html',
   styleUrls: ['./renting.component.scss']
 })
-export class RentingComponent implements OnInit {
-  public nftCards$: Observable<Card[]> = from(this.rentalService.loadMyNft()).pipe(map(this.convertNftToCard));
+export class RentingComponent {
+  public nftCards$: Observable<Card[]> = this.rentalService.loadAccountNfts()
+    .pipe(map(this.convertNftToCard));
 
   constructor(private readonly rentalService: RentalService) { }
 
-  ngOnInit(): void {
-    this.rentalService.loadMyNft();
-  }
 
   public convertNftToCard(nfts: NFT[]): Card[] {
     return nfts.map(nft => {
