@@ -4,12 +4,15 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { BehaviorSubject } from 'rxjs';
 import Web3 from 'web3';
 import { environment } from 'src/environments/environment';
+import { abi } from '../../../artifacts/contracts/RentalContract.sol/RentalContract.json';
+import { AbiItem } from 'web3-utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WalletService {
   public web3!: Web3;
+  public rentalContract!: any;
   private provider: any;
   private accounts!: string[];
   private web3Modal!: Web3Modal;
@@ -46,6 +49,7 @@ export class WalletService {
   public async connect(): Promise<void> {
     this.provider = await this.web3Modal.connect();
     this.web3 = new Web3(this.provider);
+    this.rentalContract = new this.web3.eth.Contract(abi as AbiItem[], environment.RENTAL_CONTRACT);
     this.accounts = await this.web3.eth.getAccounts();
     const account = this.accounts[0];
     this.walletSubject.next(account);
