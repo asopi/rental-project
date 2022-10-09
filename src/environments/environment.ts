@@ -4,9 +4,10 @@
 
 export const environment = {
   production: false,
-  RENTAL_CONTRACT: '<INSERT>',
-  INFURA_ID: '<INSERT>',
-  MORALIS_API_KEY: '<INSERT>'
+  ETHEREUM_NETWORK: '<insert: mainnet | goerli>',
+  RENTAL_CONTRACT: '<insert>',
+  INFURA_ID: '<insert>',
+  MORALIS_API_KEY: '<insert>'
 };
 
 /*

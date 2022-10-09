@@ -20,12 +20,6 @@ export class LendingComponent implements OnInit {
 
   }
 
-  lendClick() {
-    // this.rentalService.lend();
-  }
-
-
-
   openRentingDialog(): void {
     const dialogRef = this.dialogService.open(RentingDialogComponent, {
       width: '800px',
@@ -38,7 +32,6 @@ export class LendingComponent implements OnInit {
   }
 
   public lendClicked(nft: NFT): void {
-    console.log("lendClicked", nft);
     this.openLendingDialog(nft);
   }
 

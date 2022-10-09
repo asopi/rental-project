@@ -19,9 +19,7 @@ export class NftService {
   }
 
   public loadAccountNfts(): Observable<NFT[]> {
-    return this.walletService.account$.pipe(
-      switchMap(account => this.loadNfts(account))
-    );
+    return this.walletService.account$.pipe(switchMap(() => this.loadNfts(this.walletService.account)));
   }
 
   public loadContractNfts(): Observable<NFT[]> {

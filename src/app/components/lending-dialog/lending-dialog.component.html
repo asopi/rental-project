@@ -25,9 +25,17 @@
           <input type="number" matInput cdkFocusInitial formControlName="pricePerLike">
         </mat-form-field>
       </div>
+      <div class="approval" *ngIf="!nftApproved">
+        <p>Please give an approval in order to move this NFT to our Rental Contract.</p>
+        <button mat-button (click)="onApprove()">Approve</button>
+      </div>
+      <div class="approval" *ngIf="nftApproved">
+        <p>The Rental Contract is approved.</p>
+      </div>
+
       <div mat-dialog-actions>
         <button mat-button (click)="onCancle()">Cancle</button>
-        <button type="submit" mat-button [disabled]="lendingForm.invalid">Lend</button>
+        <button type="submit" mat-button [disabled]="lendingForm.invalid || !nftApproved">Lend</button>
       </div>
     </form>
 

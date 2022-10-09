@@ -1,8 +1,10 @@
+import { Observable } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { AbiItem } from 'web3-utils';
 import { abi } from '../../../artifacts/contracts/RentalNFT.sol/RentalNFT.json';
 import { WalletService } from './wallet.service';
+
 
 
 @Injectable({
@@ -11,21 +13,26 @@ import { WalletService } from './wallet.service';
 export class RentalService {
   constructor(private readonly walletService: WalletService) { }
 
-  public lend(nftContract: string, nftId: number, duration: number, countPrice: number) {
-    this.walletService.account$.subscribe(async account => {
-      const rentalNft = new this.walletService.web3.eth.Contract(abi as AbiItem[], nftContract);
-      const ownerOf = await rentalNft.methods.ownerOf(nftId).call();
-      if (ownerOf === account) {
-        await rentalNft.methods.approve(environment.RENTAL_CONTRACT, nftId).send({ from: account });
-        const approved = await rentalNft.methods.getApproved(nftId).call();
-        if (approved === account) {
-          await this.walletService.rentalContract.methods.lend(nftContract, nftId, duration, countPrice).send({ from: account });
-        }
-      }
-    });
+  public async approveNft(nftContract: string, nftId: number) {
+    const contract = new this.walletService.web3.eth.Contract(abi as AbiItem[], nftContract);
+    await contract.methods.approve(environment.RENTAL_CONTRACT, nftId).send({ from: this.walletService.account });
   }
 
-  public rent() {
+  public async isApproved(nftContract: string, nftId: number): Promise<boolean> {
+    const contract = new this.walletService.web3.eth.Contract(abi as AbiItem[], nftContract);
+    const approvedAddress = await contract.methods.getApproved(nftId).call();
+    return approvedAddress === environment.RENTAL_CONTRACT;
+  }
+
+  public async lend(nftContract: string, nftId: number, duration: number, countPrice: number) {
+    const contract = new this.walletService.web3.eth.Contract(abi as AbiItem[], nftContract);
+    const ownerOf = await contract.methods.ownerOf(nftId).call();
+    if (ownerOf === this.walletService.account) {
+      await this.walletService.rentalContract.methods.lend(nftContract, nftId, duration, countPrice).send({ from: this.walletService.account });
+    }
+  }
+
+  public rent(nftContract: string, nftId: number, duration: number, maxCount: number) {
 
   }
 
