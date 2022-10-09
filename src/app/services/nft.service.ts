@@ -28,30 +28,11 @@ export class NftService {
     return this.loadNfts(environment.RENTAL_CONTRACT);
   }
 
-  //   {
-  //     tokenAddress: string;
-  //     chain: string | number;
-  //     ownerOf: string | undefined;
-  //     blockNumberMinted: string | undefined;
-  //     blockNumber: string | undefined;
-  //     tokenId: string | number;
-  //     contractType?: import("@moralisweb3/evm-utils").EvmNftContractType | undefined;
-  //     tokenUri?: string | undefined;
-  //     tokenHash?: string | undefined;
-  //     metadata?: import("@moralisweb3/core").MoralisDataObjectValue | undefined;
-  //     name?: string | undefined;
-  //     symbol?: string | undefined;
-  //     lastMetadataSync?: Date | undefined;
-  //     lastTokenUriSync?: Date | undefined;
-  //     amount?: number | undefined;
-  // }
-
   private loadNfts(address: string): Observable<NFT[]> {
     return address !== '' ? from(Moralis.EvmApi.nft.getWalletNFTs({
       address,
       chain: EvmChain.GOERLI,
     })).pipe(
-
       map(next => {
         return next.result.filter(evmNft => evmNft != null).map((evmNft: any) => {
           const nft = evmNft.toJSON();
@@ -64,8 +45,6 @@ export class NftService {
             ownerAddress: nft.ownerOf,
           };
         });
-      }), tap(next => {
-        console.log("next", next);
       })) : of([]);
   }
 

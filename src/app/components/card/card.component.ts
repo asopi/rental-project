@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Card } from 'src/app/models/card.model';
+import { NFT } from 'src/app/models/wallet.model';
 
 @Component({
   selector: 'app-card',
@@ -9,10 +9,13 @@ import { Card } from 'src/app/models/card.model';
 export class CardComponent {
 
   @Input()
-  public card!: Card;
+  public nft!: NFT;
+
+  @Input()
+  public button!: string;
 
   @Output()
-  public likeClick: EventEmitter<Event> = new EventEmitter<Event>();
+  public buttonClick: EventEmitter<NFT> = new EventEmitter<NFT>();
 
   constructor() { }
 }

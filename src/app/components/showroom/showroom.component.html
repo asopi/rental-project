@@ -1,5 +1,5 @@
 <div class="showroom">
-  <div *ngFor="let card of nftCards$ | async">
-    <app-card [card]="card" (likeClick)="likeClicked($event)"></app-card>
+  <div *ngFor="let nft of nfts$ | async">
+    <app-card [nft]="nft" [button]="'Like'" (buttonClick)="likeClicked($event)"></app-card>
   </div>
 </div>

@@ -1,6 +1,5 @@
 import { NftService } from './../../services/nft.service';
 
-import { Card } from './../../models/card.model';
 import { Observable, map } from 'rxjs';
 import { Component } from '@angular/core';
 import { NFT } from './../../models/wallet.model';
@@ -11,20 +10,12 @@ import { NFT } from './../../models/wallet.model';
   styleUrls: ['./renting.component.scss']
 })
 export class RentingComponent {
-  public nftCards$: Observable<Card[]> = this.nftService.loadAccountNfts()
-    .pipe(map(this.convertNftToCard));
+  public nfts$: Observable<NFT[]> = this.nftService.loadAccountNfts();
 
   constructor(private readonly nftService: NftService) { }
 
-  public convertNftToCard(nfts: NFT[]): Card[] {
-    return nfts.map(nft => {
-      return {
-        identity: nft.ownerAddress,
-        title: nft.name,
-        subtitle: nft.description,
-        image: nft.image,
-      };
-    });
+  public rentClicked(nft: NFT) {
+    console.log("rent clicked", nft);
   }
 
 }

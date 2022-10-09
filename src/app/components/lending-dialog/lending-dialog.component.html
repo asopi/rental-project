@@ -2,33 +2,34 @@
   <div class="dialog-left">
     <img [src]="data.image" [alt]="data.name" width="250">
     <div class="left-content">
-      <app-identicon [identity]="data.identity"></app-identicon>
-      <div class="left-content-title">Hi {{data.name}}</div>
+      <app-identicon [identity]="data.ownerAddress"></app-identicon>
+      <div class="left-content-title">{{data.name}} #{{data.tokenId}}</div>
     </div>
     <div class="left-content-description">
       <p>{{data.description}}</p>
     </div>
   </div>
   <div class="dialog-right">
-    <div mat-dialog-content>
-      <h1 mat-dialog-title>Lend this NFT</h1>
-      <p>Specify the price you want to earn per like and the duration of your lending.</p>
+    <h1 mat-dialog-title>Lend your NFT</h1>
+    <p>Specify the price you want to earn per like and the duration of your lending.</p>
+    <form [formGroup]="lendingForm" (ngSubmit)="onSubmit()">
+      <div>
+        <mat-form-field appearance="fill">
+          <mat-label>Rent Duration</mat-label>
+          <input type="number" matInput formControlName="rentDuration">
+        </mat-form-field>
+      </div>
       <div>
         <mat-form-field appearance="fill">
           <mat-label>Price per like</mat-label>
-          <input type="number" matInput [(ngModel)]="data.animal" cdkFocusInitial>
+          <input type="number" matInput cdkFocusInitial formControlName="pricePerLike">
         </mat-form-field>
       </div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Max. Rent Duration</mat-label>
-          <input type="number" matInput [(ngModel)]="data.animal">
-        </mat-form-field>
+      <div mat-dialog-actions>
+        <button mat-button (click)="onCancle()">Cancle</button>
+        <button type="submit" mat-button [disabled]="lendingForm.invalid">Lend</button>
       </div>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="onCancle()">Cancle</button>
-      <button mat-button [mat-dialog-close]="data.animal">Lend</button>
-    </div>
+    </form>
+
   </div>
 </div>
