@@ -1,0 +1,30 @@
+.dialog {
+  display: flex;
+
+  &-left {
+    padding-right: 24px;
+  }
+
+  &-right {
+    flex-grow: 1;
+  }
+
+  &-fields {
+    display: flex;
+  }
+}
+
+.left-content {
+  display: flex;
+  align-items: center;
+
+  &-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: auto 8px;
+  }
+
+  &-description {
+    margin-top: 8px;
+  }
+}
