@@ -33,7 +33,7 @@ export class WalletService {
       }
     };
     this.web3Modal = new Web3Modal({
-      network: "goerli",
+      network: environment.ETHEREUM_NETWORK,
       cacheProvider: true,
       providerOptions,
       theme: {
