@@ -1,0 +1,5 @@
+<div class="identicon-container" matTooltip="Copy: {{identity | formatAddress}}" [cdkCopyToClipboard]="identity"
+  [cdkCopyToClipboardAttempts]="5" *ngIf="identity">
+  <svg class="identicon" width="{{ width }}" height="{{ height }}" [data-jdenticon-value]="identity.toLowerCase()">
+  </svg>
+</div>

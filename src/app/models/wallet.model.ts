@@ -4,6 +4,7 @@ export interface Wallet {
 }
 
 export interface NFT {
+  contractAddress?: string;
   ownerAddress: string;
   tokenId?: string;
   name: string;

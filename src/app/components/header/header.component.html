@@ -9,14 +9,14 @@
       <a mat-button [routerLink]="'/renting'" routerLinkActive="active">Renting</a>
     </div>
     <span class="spacer"></span>
-    <div class="user-section">
-
+    <div class="address-container">
       <button mat-raised-button (click)="connect()" *ngIf="(wallet$ | async) === ''">Connect</button>
-      <button mat-button matTooltip="Copy address" [class.hidden]="(wallet$ | async) === ''"
-        [cdkCopyToClipboard]="wallet$ | async" [cdkCopyToClipboardAttempts]="5">
-        <svg class="identicon" width="36" height="36" [data-jdenticon-value]="wallet$ | async"></svg>
+      <div class="address" [class.hidden]="(wallet$ | async) === ''">
         {{ wallet$ | async | formatAddress }}
-      </button>
+      </div>
+      <div class="identicon">
+        <app-identicon [identity]="(wallet$ | async)"></app-identicon>
+      </div>
       <button mat-raised-button (click)="disconnect()" *ngIf="(wallet$ | async) !== ''">Disconnect</button>
     </div>
   </mat-toolbar-row>

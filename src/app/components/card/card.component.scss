@@ -1,19 +1,8 @@
 .card {
   max-width: 200px;
   margin: 8px;
-
-  &-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
-  }
-
-  &-identicon {
-    background-color: white;
-    border-radius: 50%;
-    display: inline-block;
-    border: 1px solid;
-    padding: 2px;
-    border-color: #3f51b5;
-  }
-
+}
+.mat-card-avatar {
+  width: unset;
+  height: unset;
 }

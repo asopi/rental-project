@@ -10,16 +10,21 @@
   background: rgba(0,0,0,.2);
 }
 
-.user-section {
+.hidden {
+  display: none;
+}
+
+.address-container {
   display: flex;
+  justify-content: center;
+}
+
+.address {
+  font-size: 16px;
+  cursor: pointer;
+  margin: auto
 }
 
 .identicon {
-  background-color: white;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.hidden {
-  display: none;
+  margin: 0 8px;
 }
