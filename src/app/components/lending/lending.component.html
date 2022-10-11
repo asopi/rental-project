@@ -1,8 +1,12 @@
 <div class="lending-container">
   <h1>Your NFTs</h1>
   <div class="lending-items">
-    <div *ngFor="let nft of nfts$| async">
-      <app-card [nft]="nft" [button]="'Lend'" (buttonClick)="lendClicked($event)"></app-card>
+    <div class="m8" *ngFor="let nft of nfts$ | async">
+      <app-card
+        [nft]="nft"
+        [button]="'Lend'"
+        (buttonClick)="lendClicked($event)"
+      ></app-card>
     </div>
   </div>
 </div>

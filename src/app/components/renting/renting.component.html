@@ -1,7 +1,11 @@
 <div class="renting-container">
   <div class="renting-items">
-    <div *ngFor="let nft of nfts$ | async">
-      <app-card [nft]="nft" [button]="'Rent'" (buttonClick)="rentClicked($event)"></app-card>
+    <div class="m8" *ngFor="let nft of nfts$ | async">
+      <app-card
+        [nft]="nft"
+        [button]="'Rent'"
+        (buttonClick)="rentClicked($event)"
+      ></app-card>
     </div>
   </div>
 </div>

@@ -1,3 +1,38 @@
-.showroom {
+@import "swiper/scss";
+@import "swiper/scss/navigation";
+@import "swiper/scss/pagination";
+@import "swiper/css/effect-coverflow";
+
+:root {
+  --swiper-navigation-color: #ff4081;
+  --swiper-pagination-color: #ff4081;
+}
+
+.rentings {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-container {
+  width: 100%;
+  padding: 8px;
+}
+
+.swiper {
+  width: 100%;
+  padding: 8px;
+}
+
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 250px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 8px;
 }

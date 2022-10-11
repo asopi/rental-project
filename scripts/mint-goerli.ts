@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { config as dotenv } from 'dotenv';
 import { resolve } from "path";
+import { ethers } from "hardhat";
 dotenv({ path: resolve(__dirname, "./../.env") });
 
 const RentalNft = JSON.parse(fs.readFileSync('./artifacts/contracts/RentalNFT.sol/RentalNFT.json', 'utf-8'));

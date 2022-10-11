@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
-import Moralis from 'moralis';
 import { EvmChain } from '@moralisweb3/evm-utils';
-
-import { from, map, Observable, of, switchMap, tap } from 'rxjs';
+import Moralis from 'moralis';
+import { from, map, Observable, of, switchMap } from 'rxjs';
+import { RentalService } from 'src/app/services/rental.service';
 
 import { NFT } from '../models/wallet.model';
 import { environment } from './../../environments/environment';
 import { WalletService } from './wallet.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class NftService {
 
-  constructor(private readonly walletService: WalletService) {
+  constructor(
+    private readonly walletService: WalletService
+  ) {
     Moralis.start({
       apiKey: environment.MORALIS_API_KEY,
     });

@@ -6,6 +6,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -31,6 +33,7 @@
       "https": ["./node_modules/https-browserify"],
       "os": ["./node_modules/os-browserify"],
       "process": ["./node_modules/process"],
+      "swiper_angular": ["node_modules/swiper/angular"]
   }
   },
   "angularCompilerOptions": {

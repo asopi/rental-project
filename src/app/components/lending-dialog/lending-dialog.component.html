@@ -1,43 +1,58 @@
 <div class="dialog">
   <div class="dialog-left">
-    <img [src]="data.image" [alt]="data.name" width="250">
+    <img [src]="data.image" [alt]="data.name" width="250" />
     <div class="left-content">
       <app-identicon [identity]="data.ownerAddress"></app-identicon>
-      <div class="left-content-title">{{data.name}} #{{data.tokenId}}</div>
+      <div class="left-content-title">{{ data.name }} #{{ data.tokenId }}</div>
     </div>
     <div class="left-content-description">
-      <p>{{data.description}}</p>
+      <p>{{ data.description }}</p>
     </div>
   </div>
   <div class="dialog-right">
     <h1 mat-dialog-title>Lend your NFT</h1>
-    <p>Specify the price you want to earn per like and the duration of your lending.</p>
+    <p>
+      Specify the price you want to earn per like and the duration of your
+      lending.
+    </p>
     <form [formGroup]="lendingForm" (ngSubmit)="onSubmit()">
       <div>
         <mat-form-field appearance="fill">
           <mat-label>Rent Duration</mat-label>
-          <input type="number" matInput formControlName="rentDuration">
+          <input type="number" matInput formControlName="rentDuration" />
         </mat-form-field>
       </div>
       <div>
         <mat-form-field appearance="fill">
           <mat-label>Price per like</mat-label>
-          <input type="number" matInput cdkFocusInitial formControlName="pricePerLike">
+          <input
+            type="number"
+            matInput
+            cdkFocusInitial
+            formControlName="pricePerLike"
+          />
         </mat-form-field>
       </div>
       <div class="approval" *ngIf="!nftApproved">
-        <p>Please give an approval in order to move this NFT to our Rental Contract.</p>
+        <p>
+          Please give an approval in order to move this NFT to our Rental
+          Contract.
+        </p>
         <button mat-button (click)="onApprove()">Approve</button>
       </div>
       <div class="approval" *ngIf="nftApproved">
         <p>The Rental Contract is approved.</p>
       </div>
-
       <div mat-dialog-actions>
         <button mat-button (click)="onCancle()">Cancle</button>
-        <button type="submit" mat-button [disabled]="lendingForm.invalid || !nftApproved">Lend</button>
+        <button
+          type="submit"
+          mat-button
+          [disabled]="lendingForm.invalid || !nftApproved"
+        >
+          Lend
+        </button>
       </div>
     </form>
-
   </div>
 </div>
