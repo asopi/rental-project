@@ -9,6 +9,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -29,7 +30,6 @@ import { RentingComponent } from './components/renting/renting.component';
 import { ShowroomComponent } from './components/showroom/showroom.component';
 import { FormatAddressPipe } from './pipes/format-address.pipe';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +41,7 @@ import { FormatAddressPipe } from './pipes/format-address.pipe';
     FormatAddressPipe,
     LendingDialogComponent,
     RentingDialogComponent,
-    IdenticonComponent
+    IdenticonComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,12 +59,13 @@ import { FormatAddressPipe } from './pipes/format-address.pipe';
     MatDialogModule,
     MatInputModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     NgxJdenticonModule,
     FormsModule,
     ReactiveFormsModule,
-    SwiperModule
+    SwiperModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

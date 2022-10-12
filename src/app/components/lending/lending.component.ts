@@ -1,14 +1,15 @@
-import { NftService } from './../../services/nft.service';
-import { Observable } from 'rxjs';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { NFT } from 'src/app/models/wallet.model';
+
 import { LendingDialogComponent } from '../lending-dialog/lending-dialog.component';
+import { NftService } from './../../services/nft.service';
 
 @Component({
   selector: 'app-lending',
   templateUrl: './lending.component.html',
-  styleUrls: ['./lending.component.scss']
+  styleUrls: ['./lending.component.scss'],
 })
 export class LendingComponent {
   public nfts$: Observable<NFT[]> = this.nftService.loadAccountNfts();
@@ -16,7 +17,7 @@ export class LendingComponent {
   constructor(
     private readonly nftService: NftService,
     private readonly dialogService: MatDialog
-  ) { }
+  ) {}
 
   public lendClicked(nft: NFT): void {
     this.openLendingDialog(nft);
@@ -28,8 +29,8 @@ export class LendingComponent {
       data: nft,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log("afterClose");
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('afterClose');
     });
   }
 }

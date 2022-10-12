@@ -15,30 +15,38 @@ SwiperCore.use([EffectCoverflow, Pagination, Navigation]);
   encapsulation: ViewEncapsulation.None,
 })
 export class ShowroomComponent {
+  public nfts$: Observable<NFT[]> = this.nftService
+    .loadContractNfts()
+    .pipe(switchMap((next) => this.displayNFT(next)));
   private NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
-
-  public nfts$: Observable<NFT[]> = this.nftService.loadContractNfts().pipe(
-    switchMap(next => this.displayNFT(next))
-  );
 
   constructor(
     private readonly nftService: NftService,
     private readonly rentalService: RentalService
-  ) { }
+  ) {}
 
   public likeClicked(nft: NFT): void {
-    console.log("clicked", nft);
+    console.log('clicked', nft);
   }
 
   public displayNFT(nfts: NFT[]): Observable<NFT[]> {
-    const observables = nfts.map(nft =>
-      from(this.rentalService.getOrder(nft.tokenAddress, nft.tokenId)));
+    const observables = nfts.map((nft) =>
+      from(this.rentalService.getOrder(nft.tokenAddress, nft.tokenId))
+    );
     return forkJoin(observables).pipe(
-      map(orders => orders.filter(order => order.renter === this.NULL_ADDRESS)),
-      map(orders => nfts.filter(nft => {
-        const orderIds = orders.map(order => `${order.nftAddress.toLocaleLowerCase()}:${order.nftId}`);
-        return orderIds.includes(`${nft.tokenAddress.toLocaleLowerCase()}:${nft.tokenId}`);
-      }))
+      map((orders) =>
+        orders.filter((order) => order.renter !== this.NULL_ADDRESS)
+      ),
+      map((orders) =>
+        nfts.filter((nft) => {
+          const orderIds = orders.map(
+            (order) => `${order.nftAddress.toLocaleLowerCase()}:${order.nftId}`
+          );
+          return orderIds.includes(
+            `${nft.tokenAddress.toLocaleLowerCase()}:${nft.tokenId}`
+          );
+        })
+      )
     );
   }
 }

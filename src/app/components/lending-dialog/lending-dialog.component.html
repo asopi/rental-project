@@ -19,18 +19,18 @@
       <div>
         <mat-form-field appearance="fill">
           <mat-label>Rent Duration</mat-label>
-          <input type="number" matInput formControlName="rentDuration" />
+          <input
+            type="number"
+            matInput
+            cdkFocusInitial
+            formControlName="rentDuration"
+          />
         </mat-form-field>
       </div>
       <div>
         <mat-form-field appearance="fill">
           <mat-label>Price per like</mat-label>
-          <input
-            type="number"
-            matInput
-            cdkFocusInitial
-            formControlName="pricePerLike"
-          />
+          <input type="number" matInput formControlName="pricePerLike" />
         </mat-form-field>
       </div>
       <div class="approval" *ngIf="!nftApproved">
@@ -38,11 +38,18 @@
           Please give an approval in order to move this NFT to our Rental
           Contract.
         </p>
-        <button mat-button (click)="onApprove()">Approve</button>
+        <button
+          mat-button
+          (click)="onApprove()"
+          *ngIf="!(lendLoading$ | async)"
+        >
+          Approve
+        </button>
       </div>
       <div class="approval" *ngIf="nftApproved">
         <p>The Rental Contract is approved.</p>
       </div>
+      <mat-spinner *ngIf="lendLoading$ | async"></mat-spinner>
       <div mat-dialog-actions>
         <button mat-button (click)="onCancle()">Cancle</button>
         <button

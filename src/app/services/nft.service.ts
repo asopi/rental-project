@@ -2,27 +2,25 @@ import { Injectable } from '@angular/core';
 import { EvmChain } from '@moralisweb3/evm-utils';
 import Moralis from 'moralis';
 import { from, map, Observable, of, switchMap } from 'rxjs';
-import { RentalService } from 'src/app/services/rental.service';
 
 import { NFT } from '../models/wallet.model';
 import { environment } from './../../environments/environment';
 import { WalletService } from './wallet.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NftService {
-
-  constructor(
-    private readonly walletService: WalletService
-  ) {
+  constructor(private readonly walletService: WalletService) {
     Moralis.start({
       apiKey: environment.MORALIS_API_KEY,
     });
   }
 
   public loadAccountNfts(): Observable<NFT[]> {
-    return this.walletService.account$.pipe(switchMap(() => this.loadNfts(this.walletService.account)));
+    return this.walletService.account$.pipe(
+      switchMap(() => this.loadNfts(this.walletService.account))
+    );
   }
 
   public loadContractNfts(): Observable<NFT[]> {
@@ -30,27 +28,34 @@ export class NftService {
   }
 
   private loadNfts(address: string): Observable<NFT[]> {
-    return address !== '' ? from(Moralis.EvmApi.nft.getWalletNFTs({
-      address,
-      chain: EvmChain.GOERLI,
-    })).pipe(
-      map(next => {
-        return next.result.filter(evmNft => evmNft != null).map((evmNft: any) => {
-          const nft = evmNft.toJSON();
-          return {
-            tokenAddress: nft.tokenAddress,
-            tokenId: nft.tokenId,
-            name: nft.metadata?.name,
-            description: nft.metadata?.description,
-            image: this.addIPFSProxy(nft.metadata?.image),
-            ownerAddress: nft.ownerOf,
-          };
-        });
-      })) : of([]);
+    return address !== ''
+      ? from(
+          Moralis.EvmApi.nft.getWalletNFTs({
+            address,
+            chain: EvmChain.GOERLI,
+          })
+        ).pipe(
+          map((next) => {
+            return next.result
+              .filter((evmNft) => evmNft != null)
+              .map((evmNft: any) => {
+                const nft = evmNft.toJSON();
+                return {
+                  tokenAddress: nft.tokenAddress,
+                  tokenId: nft.tokenId,
+                  name: nft.metadata?.name,
+                  description: nft.metadata?.description,
+                  image: this.addIPFSProxy(nft.metadata?.image),
+                  ownerAddress: nft.ownerOf,
+                };
+              });
+          })
+        )
+      : of([]);
   }
 
   private addIPFSProxy(ipfsHash: string): string {
-    const url = "https://ipfs.io/ipfs/";
+    const url = 'https://ipfs.io/ipfs/';
     const ipfsRegex = /^ipfs?:\/\//;
     const ipfsUrlRegex = /^ipfs?:\/\/ipfs.io\/ipfs\//;
     const httpsIpfsRegex = /^https?:\/\/ipfs.io\/ipfs\//;
@@ -60,7 +65,7 @@ export class NftService {
     } else if (ipfsHash.match(httpsIpfsRegex)) {
       return url + ipfsHash.replace(httpsIpfsRegex, '');
     } else if (ipfsHash.match(ipfsUrlRegex)) {
-      return url + ipfsHash.replace(ipfsUrlRegex, '');;
+      return url + ipfsHash.replace(ipfsUrlRegex, '');
     } else {
       return ipfsHash;
     }

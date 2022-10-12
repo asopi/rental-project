@@ -1,19 +1,21 @@
-import { RentalService } from 'src/app/services/rental.service';
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { from, Subscription } from 'rxjs';
+import { RentalService } from 'src/app/services/rental.service';
 
 @Component({
   selector: 'app-lending-dialog',
   templateUrl: './lending-dialog.component.html',
-  styleUrls: ['./lending-dialog.component.scss']
+  styleUrls: ['./lending-dialog.component.scss'],
 })
 export class LendingDialogComponent implements OnDestroy {
   public lendingForm = new FormGroup({
     rentDuration: new FormControl('', [Validators.required]),
     pricePerLike: new FormControl('', [Validators.required]),
   });
+  public lendLoading$ = this.rentalService.lendLoading$;
+  public nftApproved = false;
   private approvalSubscription!: Subscription;
 
   get rentDuration() {
@@ -24,14 +26,17 @@ export class LendingDialogComponent implements OnDestroy {
     return this.lendingForm.get('pricePerLike');
   }
 
-  public nftApproved = false;
-
   constructor(
     private readonly rentalService: RentalService,
     public dialogRef: MatDialogRef<LendingDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.approvalSubscription = from(this.rentalService.isApproved(this.data.tokenAddress, this.data.tokenId)).subscribe(response => {
+    this.approvalSubscription = from(
+      this.rentalService.isNftApproved(
+        this.data.tokenAddress,
+        this.data.tokenId
+      )
+    ).subscribe((response) => {
       this.nftApproved = response;
     });
   }
@@ -41,9 +46,11 @@ export class LendingDialogComponent implements OnDestroy {
   }
 
   onApprove(): void {
-    this.rentalService.approveNft(this.data.tokenAddress, this.data.tokenId).then(response => {
-      this.nftApproved = true;
-    });
+    this.rentalService
+      .approveNft(this.data.tokenAddress, this.data.tokenId)
+      .then(() => {
+        this.nftApproved = true;
+      });
   }
 
   onCancle(): void {

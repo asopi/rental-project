@@ -4,10 +4,9 @@ import { NFT } from 'src/app/models/wallet.model';
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
-  styleUrls: ['./card.component.scss']
+  styleUrls: ['./card.component.scss'],
 })
 export class CardComponent {
-
   @Input()
   public nft!: NFT;
 
@@ -17,5 +16,5 @@ export class CardComponent {
   @Output()
   public buttonClick: EventEmitter<NFT> = new EventEmitter<NFT>();
 
-  constructor() { }
+  constructor() {}
 }

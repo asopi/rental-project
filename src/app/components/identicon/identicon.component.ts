@@ -3,10 +3,9 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-identicon',
   templateUrl: './identicon.component.html',
-  styleUrls: ['./identicon.component.scss']
+  styleUrls: ['./identicon.component.scss'],
 })
 export class IdenticonComponent {
-
   @Input()
   public identity: string = '';
 
@@ -16,6 +15,5 @@ export class IdenticonComponent {
   @Input()
   public height: number = 36;
 
-  constructor() { }
-
+  constructor() {}
 }
