@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
@@ -30,6 +32,7 @@ import { RentingComponent } from './components/renting/renting.component';
 import { ShowroomComponent } from './components/showroom/showroom.component';
 import { FormatAddressPipe } from './pipes/format-address.pipe';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { TableComponent } from './components/table/table.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     RentingDialogComponent,
     IdenticonComponent,
     DashboardComponent,
+    TableComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +66,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     MatInputModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
+    MatTableModule,
+    MatSortModule,
     NgxJdenticonModule,
     FormsModule,
     ReactiveFormsModule,
