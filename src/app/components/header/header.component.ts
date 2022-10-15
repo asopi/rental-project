@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { WalletService } from './../../services/wallet.service';
 
@@ -8,19 +9,26 @@ import { WalletService } from './../../services/wallet.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  public wallet$ = this.walletService.account$;
+  @Input()
+  public isMobile = false;
 
-  constructor(private readonly walletService: WalletService) {}
+  @Output()
+  public connectClicked$: EventEmitter<Event> = new EventEmitter<Event>();
 
-  public connect(): void {
-    this.walletService.connect();
+  @Output()
+  public disconnectClicked$: EventEmitter<Event> = new EventEmitter<Event>();
+
+  public account$ = this.walletService.account$;
+
+  constructor(private readonly walletService: WalletService) {
+    this.walletService.account$;
   }
 
-  public disconnect(): void {
-    this.walletService.disconnect();
+  public connectClicked(event: Event): void {
+    this.connectClicked$.next(event);
   }
 
-  public openShowroom(): void {
-    window.open('/showroom');
+  public disconnectClicked(event: Event): void {
+    this.disconnectClicked$.next(event);
   }
 }

@@ -1,42 +1,27 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <div class="title">
-      <h1>Rental Project</h1>
-    </div>
-    <div>
-      <a mat-button [routerLink]="'/dashboard'" routerLinkActive="active"
-        >Dashboard</a
-      >
-      <a mat-button [routerLink]="'/lending'" routerLinkActive="active"
-        >Lending</a
-      >
-      <a mat-button [routerLink]="'/renting'" routerLinkActive="active"
-        >Renting</a
-      >
-
-      <button mat-button color="basic" (click)="openShowroom()">
-        <mat-icon>open_in_new</mat-icon> Showroom
-      </button>
+    <div class="content">
+      <ng-content> </ng-content>
     </div>
     <span class="spacer"></span>
     <div class="address-container">
+      <div class="address" [class.hidden]="(account$ | async) === ''">
+        {{ account$ | async | formatAddress }}
+      </div>
+      <div class="identicon">
+        <app-identicon [identity]="account$ | async"></app-identicon>
+      </div>
       <button
         mat-raised-button
-        (click)="connect()"
-        *ngIf="(wallet$ | async) === ''"
+        (click)="connectClicked($event)"
+        *ngIf="(account$ | async) === '' && !isMobile"
       >
         Connect
       </button>
-      <div class="address" [class.hidden]="(wallet$ | async) === ''">
-        {{ wallet$ | async | formatAddress }}
-      </div>
-      <div class="identicon">
-        <app-identicon [identity]="wallet$ | async"></app-identicon>
-      </div>
       <button
         mat-flat-button
-        (click)="disconnect()"
-        *ngIf="(wallet$ | async) !== ''"
+        (click)="disconnectClicked($event)"
+        *ngIf="(account$ | async) !== '' && !isMobile"
       >
         Disconnect
       </button>

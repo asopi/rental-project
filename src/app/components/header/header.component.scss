@@ -1,5 +1,6 @@
-.title {
-  padding-right: 2rem;
+.content {
+  display: flex;
+  align-items: center;
 }
 
 .spacer {
@@ -7,11 +8,7 @@
 }
 
 .active {
-  background: rgba(0,0,0,.2);
-}
-
-.hidden {
-  display: none;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .address-container {
@@ -22,9 +19,9 @@
 .address {
   font-size: 16px;
   cursor: pointer;
-  margin: auto
+  margin: auto 8px;
 }
 
 .identicon {
-  margin: 0 8px;
+  margin-right: 8px;
 }

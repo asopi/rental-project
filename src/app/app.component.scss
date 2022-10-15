@@ -2,3 +2,39 @@ main {
   margin: 0 auto;
   padding: 2rem;
 }
+
+.sidenav-container {
+  flex: 1;
+}
+
+mat-toolbar {
+  background: #004a9f;
+  color: white;
+}
+
+mat-sidenav {
+  width: 200px;
+  padding: 16px;
+  text-align: center;
+}
+
+mat-sidenav-container {
+  height: calc(100vh - 65px);
+}
+
+.menu-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1rem;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+mat-divider {
+  margin: 16px 0;
+  background-color: rgba(255, 255, 255, 0.5);
+}

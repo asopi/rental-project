@@ -1,4 +1,78 @@
-<app-header *ngIf="(url$ | async) !== '/showroom'"></app-header>
-<main>
-  <router-outlet></router-outlet>
-</main>
+<app-header
+  [isMobile]="sidenav?.mode === 'over'"
+  (connectClicked$)="connect()"
+  (disconnectClicked$)="disconnect()"
+  *ngIf="(url$ | async) !== '/showroom'"
+>
+  <button
+    mat-icon-button
+    *ngIf="sidenav.mode === 'over'"
+    (click)="sidenav.toggle()"
+  >
+    <mat-icon *ngIf="!sidenav.opened"> menu </mat-icon>
+    <mat-icon *ngIf="sidenav.opened"> close </mat-icon>
+  </button>
+  <h1>Rental Project</h1>
+</app-header>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav>
+    <button
+      mat-button
+      [routerLink]="'/dashboard'"
+      routerLinkActive="active"
+      class="menu-button"
+    >
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </button>
+    <button
+      mat-button
+      [routerLink]="'/lending'"
+      routerLinkActive="active"
+      class="menu-button"
+    >
+      <mat-icon>swap_horiz</mat-icon>
+      <span>Lending</span>
+    </button>
+    <button
+      mat-button
+      [routerLink]="'/renting'"
+      routerLinkActive="active"
+      class="menu-button"
+    >
+      <mat-icon>money</mat-icon>
+      <span>Renting</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button
+      mat-button
+      color="basic"
+      (click)="openShowroom()"
+      class="menu-button"
+    >
+      <mat-icon>open_in_new</mat-icon> Showroom
+    </button>
+    <mat-divider></mat-divider>
+    <button
+      mat-stroked-button
+      (click)="connect()"
+      *ngIf="(account$ | async) === '' && sidenav?.mode === 'over'"
+    >
+      Connect
+    </button>
+    <button
+      mat-stroked-button
+      (click)="disconnect()"
+      *ngIf="(account$ | async) !== '' && sidenav?.mode === 'over'"
+    >
+      Disconnect
+    </button>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

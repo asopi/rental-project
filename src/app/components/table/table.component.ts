@@ -28,9 +28,13 @@ export class TableComponent<T>
   dataSource!: MatTableDataSource<T>;
 
   @Input()
-  displayedColumns: string[] = ['position'];
-  @ViewChild(MatTable, { static: true }) table!: MatTable<T>;
-  @ContentChildren(MatColumnDef) columnDefs!: QueryList<MatColumnDef>;
+  displayedColumns: string[] = [];
+
+  @ViewChild(MatTable, { static: true })
+  table!: MatTable<T>;
+
+  @ContentChildren(MatColumnDef)
+  columnDefs!: QueryList<MatColumnDef>;
 
   constructor(@Optional() private sort: MatSort) {}
 
