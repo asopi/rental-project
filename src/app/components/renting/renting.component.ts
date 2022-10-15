@@ -1,3 +1,4 @@
+import { WalletService } from './../../services/wallet.service';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, from, map, Observable, switchMap } from 'rxjs';
@@ -16,16 +17,24 @@ export class RentingComponent {
   public nfts$: Observable<NFT[]> = this.nftService
     .loadContractNfts()
     .pipe(switchMap((next) => this.displayNFT(next)));
+  public rentedNfts$: Observable<NFT[]> = this.nftService
+    .loadContractNfts()
+    .pipe(switchMap((next) => this.displayRentedNFT(next)));
   private NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
 
   constructor(
     private readonly nftService: NftService,
     private readonly dialogService: MatDialog,
-    private readonly rentalService: RentalService
+    private readonly rentalService: RentalService,
+    private readonly walletService: WalletService
   ) {}
 
   public rentClicked(nft: NFT): void {
     this.openRentingDialog(nft);
+  }
+
+  public stopRentClicked(nft: NFT): void {
+    this.rentalService.stopRent(nft.tokenAddress, nft.tokenId);
   }
 
   private openRentingDialog(nft: NFT): void {
@@ -46,6 +55,27 @@ export class RentingComponent {
     return forkJoin(observables).pipe(
       map((orders) =>
         orders.filter((order) => order.renter === this.NULL_ADDRESS)
+      ),
+      map((orders) =>
+        nfts.filter((nft) => {
+          const orderIds = orders.map(
+            (order) => `${order.nftAddress.toLocaleLowerCase()}:${order.nftId}`
+          );
+          return orderIds.includes(
+            `${nft.tokenAddress.toLocaleLowerCase()}:${nft.tokenId}`
+          );
+        })
+      )
+    );
+  }
+
+  public displayRentedNFT(nfts: NFT[]): Observable<NFT[]> {
+    const observables = nfts.map((nft) =>
+      from(this.rentalService.getOrder(nft.tokenAddress, nft.tokenId))
+    );
+    return forkJoin(observables).pipe(
+      map((orders) =>
+        orders.filter((order) => order.renter === this.walletService.account)
       ),
       map((orders) =>
         nfts.filter((nft) => {

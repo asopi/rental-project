@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subscription, map, tap, filter } from 'rxjs';
 
 import { WalletService } from './services/wallet.service';
 
@@ -9,9 +10,15 @@ import { WalletService } from './services/wallet.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  public url$ = this.router.events.pipe(
+    filter((event) => event instanceof NavigationEnd),
+    map((event: any) => event.url)
+  );
   private walletSubscription!: Subscription;
-
-  constructor(private readonly walletService: WalletService) {
+  constructor(
+    private readonly walletService: WalletService,
+    private readonly router: Router
+  ) {
     this.walletService.init();
   }
 

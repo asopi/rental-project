@@ -19,4 +19,8 @@ export class HeaderComponent {
   public disconnect(): void {
     this.walletService.disconnect();
   }
+
+  public openShowroom(): void {
+    window.open('/showroom');
+  }
 }

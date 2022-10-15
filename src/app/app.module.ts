@@ -29,6 +29,7 @@ import { RentingDialogComponent } from './components/renting-dialog/renting-dial
 import { RentingComponent } from './components/renting/renting.component';
 import { ShowroomComponent } from './components/showroom/showroom.component';
 import { FormatAddressPipe } from './pipes/format-address.pipe';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { FormatAddressPipe } from './pipes/format-address.pipe';
     LendingDialogComponent,
     RentingDialogComponent,
     IdenticonComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,

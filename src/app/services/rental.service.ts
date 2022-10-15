@@ -103,19 +103,27 @@ export class RentalService {
   public async stopLend(nftContract: string, nftId: number): Promise<void> {
     await this.walletService.rentalContract.methods
       .stopLend(nftContract, nftId)
-      .call({ from: this.walletService.account });
+      .send({ from: this.walletService.account })
+      .finally((next: any) => console.log('lend stopped', next));
   }
 
   public async stopRent(nftContract: string, nftId: number): Promise<void> {
+    this.getOrder(nftContract, nftId);
     await this.walletService.rentalContract.methods
       .stopRent(nftContract, nftId)
-      .call({ from: this.walletService.account });
+      .call({ from: this.walletService.account })
+      .finally((next: any) => {
+        console.log('rent stopped', next);
+      });
   }
 
   public async claimFunds(nftContract: string, nftId: number): Promise<void> {
     await this.walletService.rentalContract.methods
-      .claimFunds(nftContract, nftId)
-      .call({ from: this.walletService.account });
+      .claimFund(nftContract, nftId)
+      .call({ from: this.walletService.account })
+      .finally(() => {
+        console.log('claimFunds done');
+      });
   }
 
   public async claimRefunds(nftContract: string, nftId: number): Promise<void> {

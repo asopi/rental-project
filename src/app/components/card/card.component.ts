@@ -13,8 +13,14 @@ export class CardComponent {
   @Input()
   public button!: string;
 
+  @Input()
+  public secondButton!: string;
+
   @Output()
   public buttonClick: EventEmitter<NFT> = new EventEmitter<NFT>();
+
+  @Output()
+  public secondButtonClick: EventEmitter<NFT> = new EventEmitter<NFT>();
 
   constructor() {}
 }

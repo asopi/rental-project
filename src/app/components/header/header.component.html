@@ -4,8 +4,8 @@
       <h1>Rental Project</h1>
     </div>
     <div>
-      <a mat-button [routerLink]="'/showroom'" routerLinkActive="active"
-        >Showroom</a
+      <a mat-button [routerLink]="'/dashboard'" routerLinkActive="active"
+        >Dashboard</a
       >
       <a mat-button [routerLink]="'/lending'" routerLinkActive="active"
         >Lending</a
@@ -13,6 +13,10 @@
       <a mat-button [routerLink]="'/renting'" routerLinkActive="active"
         >Renting</a
       >
+
+      <button mat-button color="basic" (click)="openShowroom()">
+        <mat-icon>open_in_new</mat-icon> Showroom
+      </button>
     </div>
     <span class="spacer"></span>
     <div class="address-container">
@@ -30,7 +34,7 @@
         <app-identicon [identity]="wallet$ | async"></app-identicon>
       </div>
       <button
-        mat-raised-button
+        mat-flat-button
         (click)="disconnect()"
         *ngIf="(wallet$ | async) !== ''"
       >
