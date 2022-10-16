@@ -5,5 +5,7 @@ export const environment = {
   RENTAL_TOKEN: '<insert>',
   INFURA_ID: '<insert>',
   MORALIS_API_KEY: '<insert>',
+  IMPLEMENTER_ACCOUNT: '<insert>',
+  IMPLEMENTER_PRIVATE_KEY: '<insert>',
   NULL_ADDRESS: '0x0000000000000000000000000000000000000000',
 };

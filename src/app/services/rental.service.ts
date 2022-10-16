@@ -1,11 +1,13 @@
-import { BehaviorSubject } from 'rxjs';
-import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { AbiItem } from 'web3-utils';
+
 import { abi as nftAbi } from '../../../artifacts/contracts/RentalNFT.sol/RentalNFT.json';
 import { abi as tokenAbi } from '../../../artifacts/contracts/RentalToken.sol/RentalToken.json';
-import { WalletService } from './wallet.service';
 import { Order } from '../models/order.model';
+import { environment } from './../../environments/environment';
+import { NFT } from './../models/wallet.model';
+import { WalletService } from './wallet.service';
 
 @Injectable({
   providedIn: 'root',
@@ -100,57 +102,88 @@ export class RentalService {
       .finally(() => this.rentLoading$.next(false));
   }
 
-  public async stopLend(nftContract: string, nftId: number): Promise<void> {
+  public async stopLend(order: Order): Promise<void> {
     await this.walletService.rentalContract.methods
-      .stopLend(nftContract, nftId)
+      .stopLend(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
       .finally((next: any) => console.log('lend stopped', next));
   }
 
-  public async stopRent(nftContract: string, nftId: number): Promise<void> {
-    this.getOrder(nftContract, nftId);
+  public async stopRent(order: Order): Promise<void> {
     await this.walletService.rentalContract.methods
-      .stopRent(nftContract, nftId)
-      .call({ from: this.walletService.account })
+      .stopRent(order.nft.tokenAddress, order.nft.tokenId)
+      .send({ from: this.walletService.account })
       .finally((next: any) => {
         console.log('rent stopped', next);
       });
   }
 
-  public async claimFund(nftContract: string, nftId: number): Promise<void> {
+  public async claimFund(order: Order): Promise<void> {
     await this.walletService.rentalContract.methods
-      .claimFund(nftContract, nftId)
+      .claimFund(order.nft.tokenAddress, order.nft.tokenId)
       .call({ from: this.walletService.account })
       .finally(() => {
-        console.log('claimFunds done');
+        console.log('claimFund done');
       });
   }
 
-  public async claimRefund(nftContract: string, nftId: number): Promise<void> {
+  public async claimRefund(order: Order): Promise<void> {
     await this.walletService.rentalContract.methods
-      .claimRefunds(nftContract, nftId)
-      .call({ from: this.walletService.account });
+      .claimRefund(order.nft.tokenAddress, order.nft.tokenId)
+      .send({ from: this.walletService.account })
+      .finally(() => {
+        console.log('claimReFund done');
+      });
   }
 
-  public async getOrder(nftContract: string, nftId: number): Promise<Order> {
+  public async like(tokenAddress: string, tokenId: number): Promise<void> {
+    let tx = {
+      from: environment.IMPLEMENTER_ACCOUNT,
+      to: environment.RENTAL_CONTRACT,
+      gasPrice: await this.walletService.web3.eth.getGasPrice(),
+      gas: await this.walletService.rentalContract.methods
+        .increaseCount(tokenAddress, tokenId)
+        .estimateGas({ from: environment.IMPLEMENTER_ACCOUNT }),
+      data: await this.walletService.rentalContract.methods
+        .increaseCount(tokenAddress, tokenId)
+        .encodeABI(),
+    };
+
+    let signedTx: any =
+      await this.walletService.web3.eth.accounts.signTransaction(
+        tx,
+        environment.IMPLEMENTER_PRIVATE_KEY
+      );
+
+    await this.walletService.web3.eth
+      .sendSignedTransaction(signedTx.rawTransaction)
+      .then((next) => {
+        console.log('done', next);
+      });
+  }
+
+  public async getOrder(nft: NFT): Promise<Order> {
     const orderCall = await this.walletService.rentalContract.methods
-      .getOrder(nftContract, nftId)
+      .getOrder(nft.tokenAddress, nft.tokenId)
       .call({ from: this.walletService.account });
     const order = {
-      nftAddress: orderCall[0],
-      nftId: orderCall[1],
+      nft: nft,
       lender: orderCall[2],
       renter: orderCall[3],
-      duration: orderCall[4],
-      countPrice: orderCall[5],
-      count: orderCall[6],
-      maxCount: orderCall[7],
-      rentedAt: orderCall[8],
+      duration: Number(orderCall[4]),
+      countPrice: Number(orderCall[5]),
+      count: Number(orderCall[6]),
+      maxCount: Number(orderCall[7]),
+      rentedAt: Number(orderCall[8]) * 1000,
+      expiresAt: 0,
     };
     return {
       ...order,
       type: this.getOrderType(order),
       state: this.getOrderState(order),
+      currentPrice: order.count * order.countPrice,
+      maxPrice: order.maxCount * order.countPrice,
+      expiresAt: this.getExpiresAt(order.rentedAt, order.duration),
     };
   }
 
@@ -174,14 +207,28 @@ export class RentalService {
     }
   }
 
+  private getExpiresAt(rentedAt: number, duration: number): number {
+    return rentedAt === 0 ? 0 : rentedAt + duration * 24 * 60 * 60 * 1000;
+  }
+
   private getOrderState(order: Order): string {
-    if (order.renter !== environment.NULL_ADDRESS) {
-      return 'RENTED';
-    } else if (order.renter === environment.NULL_ADDRESS) {
+    if (order.renter === environment.NULL_ADDRESS) {
       return 'OPEN';
-    } else if (order.duration === 0) {
+    } else if (
+      order.renter !== environment.NULL_ADDRESS &&
+      order.duration > 0 &&
+      order.expiresAt <= order.rentedAt &&
+      order.lender !== order.renter
+    ) {
+      return 'RENTED';
+    } else if (
+      order.duration === 0 ||
+      order.expiresAt > order.rentedAt ||
+      order.lender === order.renter
+    ) {
       return 'CLOSED';
     } else {
+      console.log('order.duration', typeof order.duration);
       return 'UNKNOWN';
     }
   }

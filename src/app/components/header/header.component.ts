@@ -21,7 +21,9 @@ export class HeaderComponent {
   public account$ = this.walletService.account$;
 
   constructor(private readonly walletService: WalletService) {
-    this.walletService.account$;
+    window.ethereum.on('accountsChanged', () => {
+      this.walletService.disconnect();
+    });
   }
 
   public connectClicked(event: Event): void {

@@ -1,11 +1,12 @@
-import Web3Modal from 'web3modal';
 import { Injectable } from '@angular/core';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { BehaviorSubject, map } from 'rxjs';
-import Web3 from 'web3';
 import { environment } from 'src/environments/environment';
-import { abi } from '../../../artifacts/contracts/RentalContract.sol/RentalContract.json';
+import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+import Web3Modal from 'web3modal';
+
+import { abi } from '../../../artifacts/contracts/RentalContract.sol/RentalContract.json';
 
 @Injectable({
   providedIn: 'root',
@@ -63,6 +64,7 @@ export class WalletService {
     const account = this.accounts[0];
     this.walletSubject.next(account);
     sessionStorage.setItem('walletAddress', account);
+    window.location.reload();
   }
 
   public async disconnect(): Promise<void> {

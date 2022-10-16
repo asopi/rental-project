@@ -10,12 +10,5 @@
   <img mat-card-image [src]="nft.image" [alt]="nft.name" />
   <mat-card-actions *ngIf="button">
     <button mat-button (click)="buttonClick.next(nft)">{{ button }}</button>
-    <button
-      *ngIf="secondButton"
-      mat-button
-      (click)="secondButtonClick.next(nft)"
-    >
-      {{ secondButton }}
-    </button>
   </mat-card-actions>
 </mat-card>

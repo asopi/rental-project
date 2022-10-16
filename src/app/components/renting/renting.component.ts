@@ -41,7 +41,7 @@ export class RentingComponent {
 
   public displayNFT(nfts: NFT[]): Observable<NFT[]> {
     const observables = nfts.map((nft) =>
-      from(this.rentalService.getOrder(nft.tokenAddress, nft.tokenId))
+      from(this.rentalService.getOrder(nft))
     );
     return forkJoin(observables).pipe(
       map((orders) =>
@@ -50,7 +50,10 @@ export class RentingComponent {
       map((orders) =>
         nfts.filter((nft) => {
           const orderIds = orders.map(
-            (order) => `${order.nftAddress.toLocaleLowerCase()}:${order.nftId}`
+            (order) =>
+              `${order.nft.tokenAddress.toLocaleLowerCase()}:${
+                order.nft.tokenId
+              }`
           );
           return orderIds.includes(
             `${nft.tokenAddress.toLocaleLowerCase()}:${nft.tokenId}`

@@ -1,6 +1,6 @@
+import { NFT } from './wallet.model';
 export interface Order {
-  nftAddress: string;
-  nftId: number;
+  nft: NFT;
   lender: string;
   renter: string;
   duration: number;
@@ -10,4 +10,7 @@ export interface Order {
   rentedAt: number;
   type?: string;
   state?: string;
+  currentPrice?: number;
+  maxPrice?: number;
+  expiresAt: number;
 }

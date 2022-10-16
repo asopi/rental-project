@@ -1,11 +1,13 @@
 <div class="lending-container">
-  <div class="lending-items">
-    <div class="m8" *ngFor="let nft of nfts$ | async">
+  <div class="lending-items" *ngIf="nfts$ | async as nfts">
+    <div class="m8" *ngFor="let nft of nfts">
+      {{ nfts.length }}
       <app-card
         [nft]="nft"
         [button]="'Lend'"
         (buttonClick)="lendClicked($event)"
       ></app-card>
     </div>
+    <div *ngIf="nfts.length === 0">No NFTs were found for your account.</div>
   </div>
 </div>

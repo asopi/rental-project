@@ -83,9 +83,10 @@ contract RentalContract is IRentalContract {
         require(order._lender == msg.sender, "only lender can stop this order");
         require(order._renter == address(0), "order already rented");
         delete orders[orderId];
+        IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
     }
 
-    function claimFund(address _nftAddress, uint256 _nftId) external {
+    function claimFunds(address _nftAddress, uint256 _nftId) external {
         Order storage order = orders[id(_nftAddress, _nftId)];
         require(
             msg.sender == order._lender,
@@ -97,6 +98,7 @@ contract RentalContract is IRentalContract {
             "rent duration not exceeded"
         );
         uint256 fund = order._count * order._countPrice;
+        order._renter = payable(address(0));
         token.safeTransfer(msg.sender, fund);
         IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
     }
@@ -116,6 +118,7 @@ contract RentalContract is IRentalContract {
             order._countPrice -
             order._count *
             order._countPrice;
+        order._renter = payable(order._lender);
         token.safeTransfer(msg.sender, refund);
     }
 

@@ -6,9 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FormatDatePipe implements PipeTransform {
   transform(value: number): string {
     if (value != null && value != 0) {
-      console.log('value', value);
-
-      return new Date(value * 1000).toLocaleDateString();
+      return new Date(value).toLocaleDateString();
     } else {
       return '';
     }

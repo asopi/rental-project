@@ -37,7 +37,7 @@ export class RentingDialogComponent implements OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.orderSubscription = from(
-      this.rentalService.getOrder(this.data.tokenAddress, this.data.tokenId)
+      this.rentalService.getOrder(this.data)
     ).subscribe((response) => {
       this.order = response;
     });

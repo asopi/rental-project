@@ -20,9 +20,9 @@ interface IRentalContract {
 
     function stopRent(address _nftAddress, uint256 _nftId) external;
 
-    function claimFund(address _nftAddress, uint256 _nftId) external;
+    function claimFunds(address _nftAddress, uint256 _nftId) external;
 
-    function claimRefund(address _nftAddress, uint256 _nftId) external;
+    function claimRefunds(address _nftAddress, uint256 _nftId) external;
 
     function increaseCount(address _nftAddress, uint256 _nftId) external;
 }
