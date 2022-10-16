@@ -41,7 +41,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.walletService.init();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.walletService.init();
     this.walletSubscription = this.walletService.account$.subscribe((next) => {
       if (next == '') {
         this.walletService.connect();
@@ -49,11 +50,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.walletSubscription?.unsubscribe();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.breakPointObserver.observe(['(max-width: 800px)']).subscribe((res) => {
       if (res.matches) {
         this.sidenav.mode = 'over';

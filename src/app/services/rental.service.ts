@@ -117,7 +117,7 @@ export class RentalService {
       });
   }
 
-  public async claimFunds(nftContract: string, nftId: number): Promise<void> {
+  public async claimFund(nftContract: string, nftId: number): Promise<void> {
     await this.walletService.rentalContract.methods
       .claimFund(nftContract, nftId)
       .call({ from: this.walletService.account })
@@ -126,26 +126,53 @@ export class RentalService {
       });
   }
 
-  public async claimRefunds(nftContract: string, nftId: number): Promise<void> {
+  public async claimRefund(nftContract: string, nftId: number): Promise<void> {
     await this.walletService.rentalContract.methods
       .claimRefunds(nftContract, nftId)
       .call({ from: this.walletService.account });
   }
 
   public async getOrder(nftContract: string, nftId: number): Promise<Order> {
-    const order = await this.walletService.rentalContract.methods
+    const orderCall = await this.walletService.rentalContract.methods
       .getOrder(nftContract, nftId)
       .call({ from: this.walletService.account });
-    return {
-      nftAddress: order[0],
-      nftId: order[1],
-      lender: order[2],
-      renter: order[3],
-      duration: order[4],
-      countPrice: order[5],
-      count: order[6],
-      maxCount: order[7],
-      rentedAt: order[8],
+    const order = {
+      nftAddress: orderCall[0],
+      nftId: orderCall[1],
+      lender: orderCall[2],
+      renter: orderCall[3],
+      duration: orderCall[4],
+      countPrice: orderCall[5],
+      count: orderCall[6],
+      maxCount: orderCall[7],
+      rentedAt: orderCall[8],
     };
+    return {
+      ...order,
+      type: this.getOrderType(order),
+      state: this.getOrderState(order),
+    };
+  }
+
+  private getOrderType(order: Order): string {
+    if (order.lender === this.walletService.account) {
+      return 'LEND';
+    } else if (order.renter === this.walletService.account) {
+      return 'RENT';
+    } else {
+      return 'UNKNOWN';
+    }
+  }
+
+  private getOrderState(order: Order): string {
+    if (order.renter !== environment.NULL_ADDRESS) {
+      return 'RENTED';
+    } else if (order.renter === environment.NULL_ADDRESS) {
+      return 'OPEN';
+    } else if (order.duration === 0) {
+      return 'CLOSED';
+    } else {
+      return 'UNKNOWN';
+    }
   }
 }

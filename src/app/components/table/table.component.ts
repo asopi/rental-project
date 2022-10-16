@@ -1,13 +1,14 @@
 import {
   Component,
   ViewChild,
-  OnInit,
+  OnChanges,
   AfterViewInit,
   AfterContentInit,
   Input,
   ContentChildren,
   QueryList,
   Optional,
+  SimpleChanges,
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import {
@@ -22,7 +23,7 @@ import {
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent<T>
-  implements OnInit, AfterViewInit, AfterContentInit
+  implements OnChanges, AfterViewInit, AfterContentInit
 {
   @Input()
   dataSource!: MatTableDataSource<T>;
@@ -34,21 +35,26 @@ export class TableComponent<T>
   table!: MatTable<T>;
 
   @ContentChildren(MatColumnDef)
-  columnDefs!: QueryList<MatColumnDef>;
+  columns!: QueryList<MatColumnDef>;
 
   constructor(@Optional() private sort: MatSort) {}
 
-  ngOnInit(): void {
-    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
-    this.dataSource.sort = this.sort;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dataSource'].currentValue != null) {
+      this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
+    if (this.dataSource != null) {
+      this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+      this.dataSource.sort = this.sort;
+    }
   }
 
-  ngAfterContentInit() {
-    this.columnDefs.forEach((columnDef) => this.table.addColumnDef(columnDef));
+  ngAfterContentInit(): void {
+    this.columns.forEach((columnDef) => this.table.addColumnDef(columnDef));
   }
 
   private sortingDataAccessor(row: T, matColumnDefId: string): string {

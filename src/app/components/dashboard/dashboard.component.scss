@@ -1,0 +1,28 @@
+.dashboard {
+  width: 100%;
+}
+
+.orders {
+  padding-right: 8px;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.element {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 160px;
+  height: 80px;
+  margin: 0 16px 16px 0;
+  border-radius: 4px;
+  background-color: white;
+
+  &-value {
+    padding: 8px;
+    font-size: 24px;
+    font-weight: 800;
+  }
+}

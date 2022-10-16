@@ -28,10 +28,15 @@ mat-sidenav-container {
   align-items: center;
   justify-content: flex-start;
   font-size: 1rem;
+  color: rgba(0, 0, 0, 0.6);
 
   mat-icon {
     margin-right: 8px;
   }
+}
+
+.active {
+  color: rgba(0, 0, 0);
 }
 
 mat-divider {

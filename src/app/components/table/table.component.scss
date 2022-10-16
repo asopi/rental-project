@@ -1,8 +1,8 @@
 table {
   width: 100%;
 }
+
 .table-container {
-  height: 250px;
   max-width: 100%;
   overflow: auto;
 }
@@ -11,4 +11,11 @@ table {
   padding: 8px;
   text-align: center;
   color: grey;
+}
+
+::ng-deep {
+  td.mat-cell,
+  th.mat-cell {
+    padding: 8px !important;
+  }
 }

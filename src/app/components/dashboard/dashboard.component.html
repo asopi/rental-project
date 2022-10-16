@@ -1,2 +1,155 @@
-<h1>Lend Overview</h1>
-<h1>Rent Overview</h1>
+<div class="dashboard d-flex">
+  <div class="d-flex">
+    <div class="element mat-elevation-z2" matRipple>
+      <div>Your Balance</div>
+      <div class="element-value">55 RNT</div>
+    </div>
+    <div class="element mat-elevation-z2" matRipple>
+      <div>Rented NFTs</div>
+      <div class="element-value">3</div>
+    </div>
+    <div class="element mat-elevation-z2" matRipple>
+      <div>Rentable NFTs</div>
+      <div class="element-value">6</div>
+    </div>
+    <div class="element mat-elevation-z2" matRipple>
+      <div>Lended NFTs</div>
+      <div class="element-value">2</div>
+    </div>
+    <div class="element mat-elevation-z2" matRipple>
+      <div>Lendable NFTs</div>
+      <div class="element-value">5</div>
+    </div>
+  </div>
+  <div class="orders">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>Orders</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-table
+          [dataSource]="orders$ | async"
+          [displayedColumns]="[
+            'type',
+            'state',
+            'nftId',
+            'lender',
+            'renter',
+            'duration',
+            'countPrice',
+            'count',
+            'maxCount',
+            'rentedAt',
+            'stopActions',
+            'claimActions'
+          ]"
+          matSort
+        >
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="status-badge">
+                {{ element.type }}
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="state">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="state-badge">{{ element.state }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="nftId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>nftId</th>
+            <td mat-cell *matCellDef="let element">{{ element.nftId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="lender">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>lender</th>
+            <td mat-cell *matCellDef="let element">
+              <app-identicon [identity]="element.lender"></app-identicon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="renter">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>renter</th>
+            <td mat-cell *matCellDef="let element">
+              <app-identicon [identity]="element.renter"></app-identicon>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="duration">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>duration</th>
+            <td mat-cell *matCellDef="let element">{{ element.duration }}</td>
+          </ng-container>
+          <ng-container matColumnDef="countPrice">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              countPrice
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.countPrice }}</td>
+          </ng-container>
+          <ng-container matColumnDef="count">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>count</th>
+            <td mat-cell *matCellDef="let element">{{ element.count }}</td>
+          </ng-container>
+          <ng-container matColumnDef="maxCount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>maxCount</th>
+            <td mat-cell *matCellDef="let element">{{ element.maxCount }}</td>
+          </ng-container>
+          <ng-container matColumnDef="rentedAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>rentedAt</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.rentedAt | formatDate }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="stopActions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-button
+                (click)="stopLendClicked(element)"
+                color="warn"
+                *ngIf="element.lender === account"
+                [disabled]="element.state !== 'OPEN'"
+              >
+                Stop lend
+              </button>
+              <button
+                mat-button
+                (click)="stopRentClicked(element)"
+                color="warn"
+                *ngIf="element.renter === account"
+                [disabled]="element.state !== 'RENTED'"
+              >
+                Stop rent
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="claimActions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-button
+                (click)="claimFundClicked(element)"
+                color="primary"
+                *ngIf="element.lender === account"
+                [disabled]="element.state !== 'CLOSED'"
+              >
+                Claim fund
+              </button>
+              <button
+                mat-button
+                (click)="claimRefundClicked(element)"
+                color="primary"
+                *ngIf="element.renter === account"
+                [disabled]="element.state !== 'CLOSED'"
+              >
+                Cleim refund
+              </button>
+            </td>
+          </ng-container>
+        </app-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

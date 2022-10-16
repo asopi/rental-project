@@ -14,7 +14,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
+import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,6 +34,7 @@ import { ShowroomComponent } from './components/showroom/showroom.component';
 import { FormatAddressPipe } from './pipes/format-address.pipe';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TableComponent } from './components/table/table.component';
+import { FormatDatePipe } from './pipes/format-date.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TableComponent } from './components/table/table.component';
     IdenticonComponent,
     DashboardComponent,
     TableComponent,
+    FormatDatePipe,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +71,7 @@ import { TableComponent } from './components/table/table.component';
     MatProgressSpinnerModule,
     MatTableModule,
     MatSortModule,
+    MatRippleModule,
     NgxJdenticonModule,
     FormsModule,
     ReactiveFormsModule,
