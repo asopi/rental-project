@@ -154,6 +154,16 @@ export class RentalService {
     };
   }
 
+  public async getBalance(account: string): Promise<number> {
+    const contract = new this.walletService.web3.eth.Contract(
+      tokenAbi as AbiItem[],
+      environment.RENTAL_TOKEN
+    );
+    const result = await contract.methods.balanceOf(account).call();
+    const convertedResult = this.walletService.web3.utils.fromWei(result);
+    return parseFloat(convertedResult);
+  }
+
   private getOrderType(order: Order): string {
     if (order.lender === this.walletService.account) {
       return 'LEND';

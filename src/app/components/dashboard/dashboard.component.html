@@ -2,7 +2,7 @@
   <div class="d-flex">
     <div class="element mat-elevation-z2" matRipple>
       <div>Your Balance</div>
-      <div class="element-value">55 RNT</div>
+      <div class="element-value">{{ balance$ | async }} RNT</div>
     </div>
     <div class="element mat-elevation-z2" matRipple>
       <div>Rented NFTs</div>

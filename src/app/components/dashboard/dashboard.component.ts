@@ -15,6 +15,7 @@ import { WalletService } from './../../services/wallet.service';
 })
 export class DashboardComponent implements OnInit {
   public account = this.walletService.account;
+  public balance$!: Observable<number>;
   public orders$: Observable<any> = this.nftService.loadContractNfts().pipe(
     switchMap((nfts) => {
       const observables = nfts.map((nft) =>
@@ -41,7 +42,9 @@ export class DashboardComponent implements OnInit {
     private readonly nftService: NftService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.balance$ = from(this.rentalService.getBalance(this.account));
+  }
 
   public stopLendClicked(order: Order): void {
     this.rentalService.stopLend(order.nftAddress, order.nftId);
