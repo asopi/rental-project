@@ -15,7 +15,7 @@ export class RentingDialogComponent implements OnDestroy {
     rentDuration: new FormControl('', [Validators.required]),
     maxLikeCount: new FormControl('', [Validators.required]),
   });
-  public rentLoading$ = this.rentalService.rentLoading$;
+
   public tokenApproved = false;
   public order!: Order;
   public maxRentPrice = 0;

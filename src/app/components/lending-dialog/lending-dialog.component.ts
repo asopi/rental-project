@@ -14,7 +14,6 @@ export class LendingDialogComponent implements OnDestroy {
     rentDuration: new FormControl('', [Validators.required]),
     pricePerLike: new FormControl('', [Validators.required]),
   });
-  public lendLoading$ = this.rentalService.lendLoading$;
   public nftApproved = false;
   private approvalSubscription!: Subscription;
 

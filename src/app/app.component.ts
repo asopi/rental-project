@@ -1,3 +1,4 @@
+import { LoadingService } from './services/loading.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   AfterViewInit,
@@ -18,6 +19,7 @@ import { WalletService } from './services/wallet.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
+  public loading$: any = this.loadingService.loading$;
   public url$ = this.router.events.pipe(
     filter((event) => event instanceof NavigationEnd),
     map((event: any) => {
@@ -36,7 +38,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private readonly walletService: WalletService,
     private readonly router: Router,
-    private readonly breakPointObserver: BreakpointObserver
+    private readonly breakPointObserver: BreakpointObserver,
+    private readonly loadingService: LoadingService
   ) {
     this.walletService.init();
   }

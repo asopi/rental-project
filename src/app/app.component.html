@@ -1,3 +1,13 @@
+<div cdkOverlayOrigin #trigger="cdkOverlayOrigin"></div>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="(loading$ | async) === true"
+>
+  <div class="loading-overlay">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
 <app-header
   [isMobile]="sidenav?.mode === 'over'"
   (connectClicked$)="connect()"

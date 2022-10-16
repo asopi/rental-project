@@ -38,18 +38,12 @@
           Please give an approval in order to move this NFT to our Rental
           Contract.
         </p>
-        <button
-          mat-button
-          (click)="onApprove()"
-          *ngIf="!(lendLoading$ | async)"
-        >
-          Approve
-        </button>
+        <button mat-button (click)="onApprove()">Approve</button>
       </div>
       <div class="approval" *ngIf="nftApproved">
         <p>The Rental Contract is approved.</p>
       </div>
-      <mat-spinner *ngIf="lendLoading$ | async"></mat-spinner>
+
       <div mat-dialog-actions>
         <button mat-button (click)="onCancle()">Cancle</button>
         <button

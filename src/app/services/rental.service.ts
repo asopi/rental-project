@@ -1,3 +1,4 @@
+import { LoadingService } from './loading.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AbiItem } from 'web3-utils';
@@ -13,25 +14,21 @@ import { WalletService } from './wallet.service';
   providedIn: 'root',
 })
 export class RentalService {
-  public rentLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-  public lendLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-
-  constructor(private readonly walletService: WalletService) {}
+  constructor(
+    private readonly walletService: WalletService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   public async approveNft(nftContract: string, nftId: number) {
     const contract = new this.walletService.web3.eth.Contract(
       nftAbi as AbiItem[],
       nftContract
     );
-    this.lendLoading$.next(true);
+    this.loadingService.setLoading(true);
     await contract.methods
       .approve(environment.RENTAL_CONTRACT, nftId)
       .send({ from: this.walletService.account })
-      .finally(() => this.lendLoading$.next(false));
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async isNftApproved(
@@ -51,11 +48,11 @@ export class RentalService {
       tokenAbi as AbiItem[],
       environment.RENTAL_TOKEN
     );
-    this.rentLoading$.next(true);
+    this.loadingService.setLoading(true);
     await contract.methods
       .approve(environment.RENTAL_CONTRACT, amount)
       .send({ from: this.walletService.account })
-      .finally(() => this.rentLoading$.next(false));
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async isTokenApproved(amount: number): Promise<boolean> {
@@ -81,11 +78,11 @@ export class RentalService {
     );
     const ownerOf = await contract.methods.ownerOf(nftId).call();
     if (ownerOf === this.walletService.account) {
-      this.lendLoading$.next(true);
+      this.loadingService.setLoading(true);
       await this.walletService.rentalContract.methods
         .lend(nftContract, nftId, duration, countPrice)
         .send({ from: this.walletService.account })
-        .finally(() => this.lendLoading$.next(false));
+        .finally(() => this.loadingService.setLoading(false));
     }
   }
 
@@ -95,45 +92,45 @@ export class RentalService {
     duration: number,
     maxCount: number
   ): Promise<void> {
-    this.rentLoading$.next(true);
+    this.loadingService.setLoading(true);
     await this.walletService.rentalContract.methods
       .rent(nftContract, nftId, duration, maxCount)
       .send({ from: this.walletService.account })
-      .finally(() => this.rentLoading$.next(false));
+      .finally(() => {
+        this.loadingService.setLoading(false);
+      });
   }
 
   public async stopLend(order: Order): Promise<void> {
+    this.loadingService.setLoading(true);
     await this.walletService.rentalContract.methods
       .stopLend(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
-      .finally((next: any) => console.log('lend stopped', next));
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async stopRent(order: Order): Promise<void> {
+    this.loadingService.setLoading(true);
     await this.walletService.rentalContract.methods
       .stopRent(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
-      .finally((next: any) => {
-        console.log('rent stopped', next);
-      });
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async claimFund(order: Order): Promise<void> {
+    this.loadingService.setLoading(true);
     await this.walletService.rentalContract.methods
       .claimFund(order.nft.tokenAddress, order.nft.tokenId)
       .call({ from: this.walletService.account })
-      .finally(() => {
-        console.log('claimFund done');
-      });
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async claimRefund(order: Order): Promise<void> {
+    this.loadingService.setLoading(true);
     await this.walletService.rentalContract.methods
       .claimRefund(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
-      .finally(() => {
-        console.log('claimReFund done');
-      });
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async like(tokenAddress: string, tokenId: number): Promise<void> {
@@ -148,7 +145,7 @@ export class RentalService {
         .increaseCount(tokenAddress, tokenId)
         .encodeABI(),
     };
-
+    this.loadingService.setLoading(true);
     let signedTx: any =
       await this.walletService.web3.eth.accounts.signTransaction(
         tx,
@@ -157,9 +154,7 @@ export class RentalService {
 
     await this.walletService.web3.eth
       .sendSignedTransaction(signedTx.rawTransaction)
-      .then((next) => {
-        console.log('done', next);
-      });
+      .finally(() => this.loadingService.setLoading(false));
   }
 
   public async getOrder(nft: NFT): Promise<Order> {
