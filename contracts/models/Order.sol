@@ -11,4 +11,6 @@ struct Order {
     uint256 _count;
     uint256 _maxCount;
     uint32 _rentedAt;
+    bool _renterClaimed;
+    bool _lenderClaimed;
 }

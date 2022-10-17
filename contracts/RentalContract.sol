@@ -45,7 +45,9 @@ contract RentalContract is IRentalContract {
             _countPrice: _countPrice,
             _count: 0,
             _maxCount: 0,
-            _rentedAt: 0
+            _rentedAt: 0,
+            _renterClaimed: false,
+            _lenderClaimed: false
         });
         IERC721(_nftAddress).transferFrom(msg.sender, address(this), _nftId);
     }
@@ -86,8 +88,12 @@ contract RentalContract is IRentalContract {
         IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
     }
 
-    function claimFunds(address _nftAddress, uint256 _nftId) external {
+    function claimFund(address _nftAddress, uint256 _nftId) external {
         Order storage order = orders[id(_nftAddress, _nftId)];
+        require(
+            order._lenderClaimed == false,
+            "order fund already claimed"
+        );
         require(
             msg.sender == order._lender,
             "only lender can claim the funds and nft from this order"
@@ -97,14 +103,18 @@ contract RentalContract is IRentalContract {
                 uint32(block.timestamp),
             "rent duration not exceeded"
         );
+        order._lenderClaimed = true;
         uint256 fund = order._count * order._countPrice;
-        order._renter = payable(address(0));
         token.safeTransfer(msg.sender, fund);
         IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
     }
 
     function claimRefund(address _nftAddress, uint256 _nftId) external {
         Order storage order = orders[id(_nftAddress, _nftId)];
+        require(
+            order._renterClaimed == false,
+            "order refund already claimed"
+        );
         require(
             msg.sender == order._renter,
             "only renter can claim refunds from this order"
@@ -118,7 +128,7 @@ contract RentalContract is IRentalContract {
             order._countPrice -
             order._count *
             order._countPrice;
-        order._renter = payable(order._lender);
+        order._renterClaimed = true;
         token.safeTransfer(msg.sender, refund);
     }
 

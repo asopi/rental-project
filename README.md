@@ -1,23 +1,30 @@
 # Rental Project
+
 This project is for my master thesis.
+
 ## Contract
 
-### Deployment 
+### Deployment
 
-#### 
+####
+
 ```shell
+// test smart contract
+npx hardhat test
 // Goerli Test Network
-npm run deploy-goerli 
+npm run deploy-goerli
 or
 npx hardhat run scripts/deploy.ts --network goerli
 ```
 
 ### Verification
+
 ```shell
 npx hardhat verify --network goerli <contract address> <deployer address> <token address>
 ```
 
 ## Frontend
+
 ### Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
@@ -33,4 +40,3 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 ### Running end-to-end tests
 
 Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
