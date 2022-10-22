@@ -1,1 +1,13 @@
-{}
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.suggest.autoImports": false,
+  "javascript.suggest.includeCompletionsForImportStatements": false,
+  "typescript.suggest.includeCompletionsForImportStatements": false,
+  "typescript.suggest.autoImports": false
+}
