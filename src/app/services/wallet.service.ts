@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { BehaviorSubject, map } from 'rxjs';
@@ -26,9 +27,9 @@ export class WalletService {
     .asObservable()
     .pipe(map((next) => (this.account = next)));
 
-  constructor() {}
+  constructor(private readonly router: Router) {}
 
-  public async init(): Promise<void> {
+  public async init(): Promise<boolean> {
     const providerOptions = {
       walletconnect: {
         package: WalletConnectProvider,
@@ -55,6 +56,7 @@ export class WalletService {
       abi as AbiItem[],
       environment.RENTAL_CONTRACT
     );
+    return this.web3 != null;
   }
 
   public async connect(): Promise<void> {

@@ -67,7 +67,7 @@ contract RentalContract is IRentalContract {
         order._maxCount = _maxCount;
         order._rentedAt = uint32(block.timestamp);
         uint256 maxPrice = order._maxCount * order._countPrice;
-        require(address(msg.sender).balance > maxPrice, "not enough balance");
+        require(token.balanceOf(msg.sender) > maxPrice, "not enough balance");
         token.safeTransferFrom(msg.sender, address(this), maxPrice);
     }
 

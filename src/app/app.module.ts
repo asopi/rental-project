@@ -4,7 +4,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatRippleModule } from '@angular/material/core';
+import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -34,6 +35,7 @@ import { RentingDialogComponent } from './components/renting-dialog/renting-dial
 import { RentingComponent } from './components/renting/renting.component';
 import { ShowroomComponent } from './components/showroom/showroom.component';
 import { TableComponent } from './components/table/table.component';
+import { IsConnectedGuard } from './guards/is-connected.guard';
 import { FormatAddressPipe } from './pipes/format-address.pipe';
 import { FormatDatePipe } from './pipes/format-date.pipe';
 
@@ -64,6 +66,8 @@ import { FormatDatePipe } from './pipes/format-date.pipe';
     MatIconModule,
     MatCardModule,
     MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     ClipboardModule,
     MatTooltipModule,
     MatDialogModule,
@@ -79,7 +83,7 @@ import { FormatDatePipe } from './pipes/format-date.pipe';
     ReactiveFormsModule,
     SwiperModule,
   ],
-  providers: [],
+  providers: [IsConnectedGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

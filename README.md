@@ -6,15 +6,24 @@ This project is for my master thesis.
 
 ### Deployment
 
-####
+This comand will deploy the rental smart contract on Ethereum Goerli Test network
 
 ```shell
-// test smart contract
-npx hardhat test
-// Goerli Test Network
-npm run deploy-goerli
-or
-npx hardhat run scripts/deploy.ts --network goerli
+npm run deploy-contract
+```
+
+### Test
+
+This comand runs all unit tests for the rental smart contract
+
+```shell
+npm run test-contract
+```
+
+### Mint NFT's
+
+```shell
+npm run mint
 ```
 
 ### Verification

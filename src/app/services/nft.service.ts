@@ -37,15 +37,15 @@ export class NftService {
         ).pipe(
           map((next) => {
             return next.result
-              .filter((evmNft) => evmNft != null)
+              .filter((evmNft) => evmNft != null && evmNft.metadata != null)
               .map((evmNft: any) => {
                 const nft = evmNft.toJSON();
                 return {
                   tokenAddress: nft.tokenAddress,
                   tokenId: nft.tokenId,
-                  name: nft.metadata?.name,
-                  description: nft.metadata?.description,
-                  image: this.addIPFSProxy(nft.metadata?.image),
+                  name: nft.metadata.name,
+                  description: nft.metadata.description,
+                  image: this.addIPFSProxy(nft.metadata.image),
                   ownerAddress: nft.ownerOf,
                 };
               });
@@ -59,7 +59,6 @@ export class NftService {
     const ipfsRegex = /^ipfs?:\/\//;
     const ipfsUrlRegex = /^ipfs?:\/\/ipfs.io\/ipfs\//;
     const httpsIpfsRegex = /^https?:\/\/ipfs.io\/ipfs\//;
-
     if (ipfsHash.match(ipfsRegex)) {
       return url + ipfsHash.replace(ipfsRegex, '');
     } else if (ipfsHash.match(httpsIpfsRegex)) {

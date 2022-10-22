@@ -1,7 +1,6 @@
 <div class="lending-container">
   <div class="lending-items" *ngIf="nfts$ | async as nfts">
     <div class="m8" *ngFor="let nft of nfts">
-      {{ nfts.length }}
       <app-card
         [nft]="nft"
         [button]="'Lend'"

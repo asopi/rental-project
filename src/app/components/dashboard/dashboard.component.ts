@@ -13,9 +13,11 @@ import { WalletService } from './../../services/wallet.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   public account = this.walletService.account;
-  public balance$!: Observable<number>;
+  public balance$: Observable<number> = from(
+    this.rentalService.getBalance(this.account)
+  );
   public rentedNfts = 0;
   public rentableNfts = 0;
   public lendedNfts = 0;
@@ -50,10 +52,6 @@ export class DashboardComponent implements OnInit {
     private readonly nftService: NftService
   ) {}
 
-  ngOnInit(): void {
-    this.balance$ = from(this.rentalService.getBalance(this.account));
-  }
-
   public stopLendClicked(order: Order): void {
     this.rentalService.stopLend(order);
   }
@@ -75,7 +73,9 @@ export class DashboardComponent implements OnInit {
       (order) => order.renter === this.account
     ).length;
     this.rentableNfts = orders.filter(
-      (order) => order.renter === environment.NULL_ADDRESS
+      (order) =>
+        order.renter === environment.NULL_ADDRESS &&
+        order.lender !== this.walletService.account
     ).length;
     this.lendedNfts = orders.filter(
       (order) =>

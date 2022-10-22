@@ -26,7 +26,7 @@
 </app-header>
 
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav>
+  <mat-sidenav #sidenav [opened]="true" [mode]="'side'">
     <button
       mat-button
       [routerLink]="'/dashboard'"

@@ -13,4 +13,6 @@ export interface Order {
   currentPrice?: number;
   maxPrice?: number;
   expiresAt: number;
+  renterClaimed: boolean;
+  lenderClaimed: boolean;
 }

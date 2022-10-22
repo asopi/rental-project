@@ -24,13 +24,9 @@ export class LendingComponent {
   }
 
   private openLendingDialog(nft: NFT): void {
-    const dialogRef = this.dialogService.open(LendingDialogComponent, {
+    this.dialogService.open(LendingDialogComponent, {
       width: '800px',
       data: nft,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('afterClose');
     });
   }
 }

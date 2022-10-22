@@ -1,3 +1,4 @@
+import { WalletService } from './../../services/wallet.service';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, from, map, Observable, switchMap } from 'rxjs';
@@ -21,7 +22,8 @@ export class RentingComponent {
   constructor(
     private readonly nftService: NftService,
     private readonly dialogService: MatDialog,
-    private readonly rentalService: RentalService
+    private readonly rentalService: RentalService,
+    private readonly walletService: WalletService
   ) {}
 
   public rentClicked(nft: NFT): void {
@@ -29,13 +31,9 @@ export class RentingComponent {
   }
 
   private openRentingDialog(nft: NFT): void {
-    const dialogRef = this.dialogService.open(RentingDialogComponent, {
+    this.dialogService.open(RentingDialogComponent, {
       width: '800px',
       data: nft,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('afterClose');
     });
   }
 
@@ -45,7 +43,11 @@ export class RentingComponent {
     );
     return forkJoin(observables).pipe(
       map((orders) =>
-        orders.filter((order) => order.renter === environment.NULL_ADDRESS)
+        orders.filter(
+          (order) =>
+            order.renter === environment.NULL_ADDRESS &&
+            order.lender !== this.walletService.account
+        )
       ),
       map((orders) =>
         nfts.filter((nft) => {

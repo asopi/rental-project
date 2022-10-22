@@ -1,3 +1,4 @@
+import { DateUtil } from './../../utils/date.util';
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -11,8 +12,10 @@ import { RentalService } from 'src/app/services/rental.service';
   styleUrls: ['./renting-dialog.component.scss'],
 })
 export class RentingDialogComponent implements OnDestroy {
+  public minDate = new Date();
+  public maxDate = new Date();
   public rentingForm = new FormGroup({
-    rentDuration: new FormControl('', [Validators.required]),
+    rentDate: new FormControl('', [Validators.required]),
     maxLikeCount: new FormControl('', [Validators.required]),
   });
 
@@ -23,8 +26,8 @@ export class RentingDialogComponent implements OnDestroy {
   private orderSubscription!: Subscription;
   private maxLikeCountSubscription!: Subscription;
 
-  get rentDuration() {
-    return this.rentingForm.get('rentDuration');
+  get rentDate() {
+    return this.rentingForm.get('rentDate');
   }
 
   get maxLikeCount() {
@@ -40,6 +43,7 @@ export class RentingDialogComponent implements OnDestroy {
       this.rentalService.getOrder(this.data)
     ).subscribe((response) => {
       this.order = response;
+      this.maxDate.setDate(this.maxDate.getDate() + this.order.duration);
     });
     if (this.maxLikeCount != null) {
       this.maxLikeCountSubscription = this.maxLikeCount.valueChanges.subscribe(
@@ -75,16 +79,21 @@ export class RentingDialogComponent implements OnDestroy {
     if (
       this.data.tokenAddress != null &&
       this.data.tokenId != null &&
-      this.rentDuration?.value != null &&
+      this.rentDate?.value != null &&
       this.maxLikeCount?.value != null &&
       this.tokenApproved
     ) {
-      this.rentalService.rent(
-        this.data.tokenAddress,
-        this.data.tokenId,
-        Number(this.rentDuration.value),
-        Number(this.maxLikeCount.value)
-      );
+      this.rentalService
+        .rent(
+          this.data.tokenAddress,
+          this.data.tokenId,
+          DateUtil.getDays(
+            this.minDate,
+            new Date(Date.parse(this.rentDate.value))
+          ),
+          Number(this.maxLikeCount.value)
+        )
+        .finally(() => this.dialogRef.close());
     }
   }
 }

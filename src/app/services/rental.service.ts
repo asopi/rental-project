@@ -1,6 +1,6 @@
+import { Router } from '@angular/router';
 import { LoadingService } from './loading.service';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { AbiItem } from 'web3-utils';
 
 import { abi as nftAbi } from '../../../artifacts/contracts/RentalNFT.sol/RentalNFT.json';
@@ -16,7 +16,8 @@ import { WalletService } from './wallet.service';
 export class RentalService {
   constructor(
     private readonly walletService: WalletService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly router: Router
   ) {}
 
   public async approveNft(nftContract: string, nftId: number) {
@@ -50,7 +51,7 @@ export class RentalService {
     );
     this.loadingService.setLoading(true);
     await contract.methods
-      .approve(environment.RENTAL_CONTRACT, amount)
+      .approve(environment.RENTAL_CONTRACT, this.toContractPrice(amount))
       .send({ from: this.walletService.account })
       .finally(() => this.loadingService.setLoading(false));
   }
@@ -63,7 +64,7 @@ export class RentalService {
     const allowance = await contract.methods
       .allowance(this.walletService.account, environment.RENTAL_CONTRACT)
       .call();
-    return allowance >= amount;
+    return allowance >= Number(this.toContractPrice(amount));
   }
 
   public async lend(
@@ -80,9 +81,12 @@ export class RentalService {
     if (ownerOf === this.walletService.account) {
       this.loadingService.setLoading(true);
       await this.walletService.rentalContract.methods
-        .lend(nftContract, nftId, duration, countPrice)
+        .lend(nftContract, nftId, duration, this.toContractPrice(countPrice))
         .send({ from: this.walletService.account })
-        .finally(() => this.loadingService.setLoading(false));
+        .finally(() => {
+          this.loadingService.setLoading(false);
+          this.router.navigateByUrl('/dashboard');
+        });
     }
   }
 
@@ -96,8 +100,10 @@ export class RentalService {
     await this.walletService.rentalContract.methods
       .rent(nftContract, nftId, duration, maxCount)
       .send({ from: this.walletService.account })
+      .on('error', (error: any) => console.error(error))
       .finally(() => {
         this.loadingService.setLoading(false);
+        this.router.navigateByUrl('/dashboard');
       });
   }
 
@@ -106,7 +112,10 @@ export class RentalService {
     await this.walletService.rentalContract.methods
       .stopLend(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
-      .finally(() => this.loadingService.setLoading(false));
+      .finally(() => {
+        this.loadingService.setLoading(false);
+        window.location.reload();
+      });
   }
 
   public async stopRent(order: Order): Promise<void> {
@@ -114,15 +123,21 @@ export class RentalService {
     await this.walletService.rentalContract.methods
       .stopRent(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
-      .finally(() => this.loadingService.setLoading(false));
+      .finally(() => {
+        this.loadingService.setLoading(false);
+        window.location.reload();
+      });
   }
 
   public async claimFund(order: Order): Promise<void> {
     this.loadingService.setLoading(true);
     await this.walletService.rentalContract.methods
       .claimFund(order.nft.tokenAddress, order.nft.tokenId)
-      .call({ from: this.walletService.account })
-      .finally(() => this.loadingService.setLoading(false));
+      .send({ from: this.walletService.account })
+      .finally(() => {
+        this.loadingService.setLoading(false);
+        window.location.reload();
+      });
   }
 
   public async claimRefund(order: Order): Promise<void> {
@@ -130,7 +145,10 @@ export class RentalService {
     await this.walletService.rentalContract.methods
       .claimRefund(order.nft.tokenAddress, order.nft.tokenId)
       .send({ from: this.walletService.account })
-      .finally(() => this.loadingService.setLoading(false));
+      .finally(() => {
+        this.loadingService.setLoading(false);
+        window.location.reload();
+      });
   }
 
   public async like(tokenAddress: string, tokenId: number): Promise<void> {
@@ -166,11 +184,13 @@ export class RentalService {
       lender: orderCall[2],
       renter: orderCall[3],
       duration: Number(orderCall[4]),
-      countPrice: Number(orderCall[5]),
+      countPrice: this.toRNT(orderCall[5]),
       count: Number(orderCall[6]),
       maxCount: Number(orderCall[7]),
       rentedAt: Number(orderCall[8]) * 1000,
       expiresAt: 0,
+      renterClaimed: orderCall[9],
+      lenderClaimed: orderCall[10],
     };
     return {
       ...order,
@@ -217,14 +237,26 @@ export class RentalService {
     ) {
       return 'RENTED';
     } else if (
+      (order.lender === this.walletService.account && order.lenderClaimed) ||
+      (order.renter === this.walletService.account && order.renterClaimed)
+    ) {
+      return 'CLAIMED';
+    } else if (
       order.duration === 0 ||
       order.expiresAt > order.rentedAt ||
       order.lender === order.renter
     ) {
       return 'CLOSED';
     } else {
-      console.log('order.duration', typeof order.duration);
       return 'UNKNOWN';
     }
+  }
+
+  private toContractPrice(amount: number): string {
+    return `${amount * 10 ** 18}`;
+  }
+
+  private toRNT(amount: number) {
+    return amount / 10 ** 18;
   }
 }

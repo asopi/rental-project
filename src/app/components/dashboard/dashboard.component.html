@@ -151,7 +151,9 @@
                 (click)="claimFundClicked(element)"
                 color="primary"
                 *ngIf="element.lender === account"
-                [disabled]="element.state !== 'CLOSED'"
+                [disabled]="
+                  element.state !== 'CLOSED' || element.state === 'CLAIMED'
+                "
               >
                 Claim fund
               </button>
@@ -160,7 +162,9 @@
                 (click)="claimRefundClicked(element)"
                 color="primary"
                 *ngIf="element.renter === account"
-                [disabled]="element.state !== 'CLOSED'"
+                [disabled]="
+                  element.state !== 'CLOSED' || element.state === 'CLAIMED'
+                "
               >
                 Claim refund
               </button>

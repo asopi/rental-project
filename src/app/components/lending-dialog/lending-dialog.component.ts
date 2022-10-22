@@ -1,3 +1,4 @@
+import { DateUtil } from './../../utils/date.util';
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -10,15 +11,16 @@ import { RentalService } from 'src/app/services/rental.service';
   styleUrls: ['./lending-dialog.component.scss'],
 })
 export class LendingDialogComponent implements OnDestroy {
+  public minDate = new Date();
   public lendingForm = new FormGroup({
-    rentDuration: new FormControl('', [Validators.required]),
+    rentDate: new FormControl('', [Validators.required]),
     pricePerLike: new FormControl('', [Validators.required]),
   });
   public nftApproved = false;
   private approvalSubscription!: Subscription;
 
-  get rentDuration() {
-    return this.lendingForm.get('rentDuration');
+  get rentDate() {
+    return this.lendingForm.get('rentDate');
   }
 
   get pricePerLike() {
@@ -60,16 +62,21 @@ export class LendingDialogComponent implements OnDestroy {
     if (
       this.data.tokenAddress != null &&
       this.data.tokenId != null &&
-      this.rentDuration?.value != null &&
+      this.rentDate?.value != null &&
       this.pricePerLike?.value != null &&
       this.nftApproved
     ) {
-      this.rentalService.lend(
-        this.data.tokenAddress,
-        this.data.tokenId,
-        Number(this.rentDuration.value),
-        Number(this.pricePerLike.value)
-      );
+      this.rentalService
+        .lend(
+          this.data.tokenAddress,
+          this.data.tokenId,
+          DateUtil.getDays(
+            this.minDate,
+            new Date(Date.parse(this.rentDate.value))
+          ),
+          Number(this.pricePerLike.value)
+        )
+        .finally(() => this.dialogRef.close());
     }
   }
 }
