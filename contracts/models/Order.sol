@@ -1,16 +1,20 @@
 //SPDX-License-Identifier: AFL-3.0
 pragma solidity ^0.8.9;
 
+/*
+ * @author Alfred Sopi
+ * @notice Structure representing an order used by the Rental Contract
+ */
 struct Order {
-    address _nftAddress;
-    uint256 _nftId;
-    address _lender;
-    address payable _renter;
-    uint256 _duration;
-    uint256 _countPrice;
-    uint256 _count;
-    uint256 _maxCount;
-    uint32 _rentedAt;
-    bool _renterClaimed;
-    bool _lenderClaimed;
+    address nftAddress;
+    uint256 nftId;
+    address lender;
+    address payable renter;
+    uint256 duration;
+    uint256 countPrice;
+    uint256 count;
+    uint256 maxCount;
+    uint32 rentedAt;
+    bool renterClaimed;
+    bool lenderClaimed;
 }

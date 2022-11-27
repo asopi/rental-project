@@ -57,6 +57,9 @@ export class WalletService {
     return this.web3 != null;
   }
 
+  /**
+   * Connects the wallet account stored in MetaMask or WalletConnect and stores it in the session storage.
+   */
   public async connect(): Promise<void> {
     this.provider = await this.web3Modal.connect();
     this.web3 = new Web3(this.provider);
@@ -67,6 +70,9 @@ export class WalletService {
     window.location.reload();
   }
 
+  /**
+   * Disconnects the wallet account stored in MetaMask or WalletConnect and removes it from the session storage.
+   */
   public async disconnect(): Promise<void> {
     this.web3Modal.clearCachedProvider();
     this.walletSubject.next('');

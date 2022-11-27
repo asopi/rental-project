@@ -9,6 +9,11 @@ export class LoadingService {
     false
   );
 
+  /**
+   * Emits the next loading state used while waiting for a response.
+   *
+   * @param state Contains the information about the loading state.
+   */
   public setLoading(state: boolean): void {
     this.loading$.next(state);
   }

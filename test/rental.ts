@@ -84,7 +84,7 @@ describe('Rental Solution', () => {
         rentalNft.address,
         nftId
       );
-      expect(rentOrderIncreased._count).to.equal(1);
+      expect(rentOrderIncreased.count).to.equal(1);
     });
 
     it('should execute increaseCount transaction until maxcount is reached', async () => {
@@ -103,7 +103,7 @@ describe('Rental Solution', () => {
     it('should not execute increaseCount when order is expired', async () => {
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       await time.increaseTo(
-        order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1
+        order.rentedAt + Number(order.duration) * DAY_IN_SECONDS + 1
       );
       await expect(
         rentalContract
@@ -128,7 +128,7 @@ describe('Rental Solution', () => {
         .connect(renter)
         .rent(rentalNft.address, nextNftId, 12, 10);
       const order = await rentalContract.getOrder(rentalNft.address, nextNftId);
-      expect(order._renter).to.equal(renter.address);
+      expect(order.renter).to.equal(renter.address);
     });
 
     it('should not execute rent transaction with a duration <= 0', async () => {
@@ -179,7 +179,7 @@ describe('Rental Solution', () => {
     it('should execute stop rent transaction', async () => {
       await rentalContract.connect(renter).stopRent(rentalNft.address, nftId);
       const order = await rentalContract.getOrder(rentalNft.address, nftId);
-      expect(order._duration).to.equal(0);
+      expect(order.duration).to.equal(0);
     });
 
     it('should not execute stop lend transaction', async () => {
@@ -204,14 +204,14 @@ describe('Rental Solution', () => {
       }
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       const refund =
-        order._maxCount * order._countPrice - order._count * order._countPrice;
+        order.maxCount * order.countPrice - order.count * order.countPrice;
       const expectedBalance = Number(balanceBefore) + refund;
       await rentalContract.connect(renter).stopRent(rentalNft.address, nftId);
       await rentalContract
         .connect(renter)
         .claimRefund(rentalNft.address, nftId);
       order = await rentalContract.getOrder(rentalNft.address, nftId);
-      expect(order._renterClaimed).to.equal(true);
+      expect(order.renterClaimed).to.equal(true);
       expect(await rentalToken.balanceOf(renter.address)).to.equal(
         expectedBalance
       );
@@ -226,16 +226,16 @@ describe('Rental Solution', () => {
       }
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       const refund =
-        order._maxCount * order._countPrice - order._count * order._countPrice;
+        order.maxCount * order.countPrice - order.count * order.countPrice;
       const expectedBalance = Number(balanceBefore) + refund;
       await time.increaseTo(
-        order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1
+        order.rentedAt + Number(order.duration) * DAY_IN_SECONDS + 1
       );
       await rentalContract
         .connect(renter)
         .claimRefund(rentalNft.address, nftId);
       order = await rentalContract.getOrder(rentalNft.address, nftId);
-      expect(order._renterClaimed).to.equal(true);
+      expect(order.renterClaimed).to.equal(true);
       expect(await rentalToken.balanceOf(renter.address)).to.equal(
         expectedBalance
       );
@@ -244,7 +244,7 @@ describe('Rental Solution', () => {
     it('should not allow renter to claim already claimed refund', async () => {
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       await time.increaseTo(
-        order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1
+        order.rentedAt + Number(order.duration) * DAY_IN_SECONDS + 1
       );
       await rentalContract
         .connect(renter)
@@ -282,7 +282,7 @@ describe('Rental Solution', () => {
         .connect(lender)
         .lend(rentalNft.address, nextNftId, 12, 10);
       const order = await rentalContract.getOrder(rentalNft.address, nextNftId);
-      expect(order._lender).to.equal(lender.address);
+      expect(order.lender).to.equal(lender.address);
     });
 
     it('should not execute lend transaction with a duration <= 0', async () => {
@@ -329,7 +329,7 @@ describe('Rental Solution', () => {
         rentalNft.address,
         nextNftId
       );
-      expect(orderAfter._lender).to.equal(ethers.constants.AddressZero);
+      expect(orderAfter.lender).to.equal(ethers.constants.AddressZero);
       expect(await rentalNft.ownerOf(nextNftId)).to.equal(lender.address);
     });
 
@@ -354,7 +354,7 @@ describe('Rental Solution', () => {
       }
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       const expectedBalance =
-        Number(balanceBefore) + order._count * order._countPrice;
+        Number(balanceBefore) + order.count * order.countPrice;
       await rentalContract.connect(renter).stopRent(rentalNft.address, nftId);
       await rentalContract.connect(lender).claimFund(rentalNft.address, nftId);
       expect(await rentalNft.ownerOf(nftId)).to.equal(lender.address);
@@ -367,13 +367,13 @@ describe('Rental Solution', () => {
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       let balanceBefore = await rentalToken.balanceOf(lender.address);
       const expectedBalance =
-        Number(balanceBefore) + order._count * order._countPrice;
+        Number(balanceBefore) + order.count * order.countPrice;
       await time.increaseTo(
-        order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1
+        order.rentedAt + Number(order.duration) * DAY_IN_SECONDS + 1
       );
       await rentalContract.connect(lender).claimFund(rentalNft.address, nftId);
       order = await rentalContract.getOrder(rentalNft.address, nftId);
-      expect(order._lenderClaimed).to.equal(true);
+      expect(order.lenderClaimed).to.equal(true);
       expect(await rentalNft.ownerOf(nftId)).to.equal(lender.address);
       expect(await rentalToken.balanceOf(lender.address)).to.equal(
         expectedBalance
@@ -383,7 +383,7 @@ describe('Rental Solution', () => {
     it('should not allow lender to claim already claimed fund', async () => {
       let order = await rentalContract.getOrder(rentalNft.address, nftId);
       await time.increaseTo(
-        order._rentedAt + Number(order._duration) * DAY_IN_SECONDS + 1
+        order.rentedAt + Number(order.duration) * DAY_IN_SECONDS + 1
       );
       await rentalContract.connect(lender).claimFund(rentalNft.address, nftId);
       await expect(

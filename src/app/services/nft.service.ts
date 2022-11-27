@@ -17,16 +17,32 @@ export class NftService {
     });
   }
 
+  /**
+   * Loads all NFTs for the connected account
+   *
+   * @returns Observable list of NFTs
+   */
   public loadAccountNfts(): Observable<NFT[]> {
     return this.walletService.account$.pipe(
       switchMap(() => this.loadNfts(this.walletService.account))
     );
   }
 
+  /**
+   * Loads all NFTs stored in the Rental Contract
+   *
+   * @returns Observable list of NFTs
+   */
   public loadContractNfts(): Observable<NFT[]> {
     return this.loadNfts(environment.RENTAL_CONTRACT);
   }
 
+  /**
+   * Loads all NFTs associated with a specific account address
+   *
+   * @param address Contains the account address
+   * @returns Observable list of NFTs
+   */
   private loadNfts(address: string): Observable<NFT[]> {
     return address !== ''
       ? from(
@@ -45,7 +61,7 @@ export class NftService {
                   tokenId: nft.tokenId,
                   name: nft.metadata.name,
                   description: nft.metadata.description,
-                  image: this.addIPFSProxy(nft.metadata.image),
+                  image: this.createIPFSGatewayUrl(nft.metadata.image),
                   ownerAddress: nft.ownerOf,
                 };
               });
@@ -54,7 +70,13 @@ export class NftService {
       : of([]);
   }
 
-  private addIPFSProxy(ipfsHash: string): string {
+  /**
+   * Creates the IPFS gateway url to load the image assosiated with an NFT.
+   *
+   * @param ipfsHash Contains the ipfs hash that is associated with an NFT. This value can have different formats that must be handled.
+   * @returns IPFS gateway url
+   */
+  private createIPFSGatewayUrl(ipfsHash: string): string {
     const url = 'https://ipfs.io/ipfs/';
     const ipfsRegex = /^ipfs?:\/\//;
     const ipfsUrlRegex = /^ipfs?:\/\/ipfs.io\/ipfs\//;

@@ -8,13 +8,21 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/IRentalContract.sol";
 import {Order} from "./models/Order.sol";
 
+/*
+ * @author Alfred Sopi
+ * @notice The Rental Contract can be used to create and manage ERC-721 lend and rent orders.
+ * For the purpose of the pay-per-like pricing model, each order is associated with a counter that is used to calculate the rental fees.
+ */
 contract RentalContract is IRentalContract {
     using SafeERC20 for IERC20;
     mapping(bytes32 => Order) public orders;
     address public implementer;
-    IERC20 public token;
+    IERC20 private _token;
     uint256 private constant DAY_IN_SECONDS = 86400;
 
+    /**
+     * @dev Modifier to check if the sender is the implementer
+     */
     modifier onlyImplementer() {
         require(
             msg.sender == implementer,
@@ -23,142 +31,178 @@ contract RentalContract is IRentalContract {
         _;
     }
 
-    constructor(address _implementer, address _token) {
-        implementer = _implementer;
-        token = IERC20(_token);
+    constructor(address implementerAddress, address token) {
+        implementer = implementerAddress;
+        _token = IERC20(token);
     }
 
+    /**
+     * @dev See {IRentalContract-lend}.
+     */
     function lend(
-        address _nftAddress,
-        uint256 _nftId,
-        uint256 _duration,
-        uint256 _countPrice
+        address nftAddress,
+        uint256 nftId,
+        uint256 duration,
+        uint256 countPrice
     ) external {
-        require(_duration > 0, "duration is <= 0");
-        require(_countPrice > 0, "countPrice is <= 0");
-        orders[id(_nftAddress, _nftId)] = Order({
-            _nftAddress: _nftAddress,
-            _nftId: _nftId,
-            _lender: msg.sender,
-            _renter: payable(address(0)),
-            _duration: _duration,
-            _countPrice: _countPrice,
-            _count: 0,
-            _maxCount: 0,
-            _rentedAt: 0,
-            _renterClaimed: false,
-            _lenderClaimed: false
+        require(duration > 0, "duration is <= 0");
+        require(countPrice > 0, "countPrice is <= 0");
+        orders[id(nftAddress, nftId)] = Order({
+            nftAddress: nftAddress,
+            nftId: nftId,
+            lender: msg.sender,
+            renter: payable(address(0)),
+            duration: duration,
+            countPrice: countPrice,
+            count: 0,
+            maxCount: 0,
+            rentedAt: 0,
+            renterClaimed: false,
+            lenderClaimed: false
         });
-        IERC721(_nftAddress).transferFrom(msg.sender, address(this), _nftId);
+        IERC721(nftAddress).transferFrom(msg.sender, address(this), nftId);
     }
 
+    /**
+     * @dev See {IRentalContract-rent}.
+     */
     function rent(
-        address _nftAddress,
-        uint256 _nftId,
-        uint256 _duration,
-        uint256 _maxCount
+        address nftAddress,
+        uint256 nftId,
+        uint256 duration,
+        uint256 maxCount
     ) external payable {
-        require(_duration > 0, "duration is <= 0");
-        require(_maxCount > 0, "maxCount is <= 0");
-        Order storage order = orders[id(_nftAddress, _nftId)];
-        require(order._renter == address(0), "order already rented");
-        order._renter = payable(msg.sender);
-        order._duration = _duration;
-        order._maxCount = _maxCount;
-        order._rentedAt = uint32(block.timestamp);
-        uint256 maxPrice = order._maxCount * order._countPrice;
-        require(token.balanceOf(msg.sender) > maxPrice, "not enough balance");
-        token.safeTransferFrom(msg.sender, address(this), maxPrice);
+        require(duration > 0, "duration is <= 0");
+        require(maxCount > 0, "maxCount is <= 0");
+        Order storage order = orders[id(nftAddress, nftId)];
+        require(order.renter == address(0), "order already rented");
+        order.renter = payable(msg.sender);
+        order.duration = duration;
+        order.maxCount = maxCount;
+        order.rentedAt = uint32(block.timestamp);
+        uint256 maxPrice = order.maxCount * order.countPrice;
+        require(_token.balanceOf(msg.sender) > maxPrice, "not enough balance");
+        _token.safeTransferFrom(msg.sender, address(this), maxPrice);
     }
 
-    function stopRent(address _nftAddress, uint256 _nftId) external {
-        bytes32 orderId = id(_nftAddress, _nftId);
+    /**
+     * @dev See {IRentalContract-stopRent}.
+     */
+    function stopRent(address nftAddress, uint256 nftId) external {
+        bytes32 orderId = id(nftAddress, nftId);
         Order storage order = orders[orderId];
-        require(order._duration != 0, "order already stopped");
-        require(msg.sender == order._renter, "only renter can stop this order");
-        order._duration = 0;
+        require(order.duration != 0, "order already stopped");
+        require(msg.sender == order.renter, "only renter can stop this order");
+        order.duration = 0;
     }
 
-    function stopLend(address _nftAddress, uint256 _nftId) external {
-        bytes32 orderId = id(_nftAddress, _nftId);
+    /**
+     * @dev See {IRentalContract-stopLend}.
+     */
+    function stopLend(address nftAddress, uint256 nftId) external {
+        bytes32 orderId = id(nftAddress, nftId);
         Order storage order = orders[orderId];
-        require(order._lender == msg.sender, "only lender can stop this order");
-        require(order._renter == address(0), "order already rented");
+        require(order.lender == msg.sender, "only lender can stop this order");
+        require(order.renter == address(0), "order already rented");
         delete orders[orderId];
-        IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
+        IERC721(nftAddress).transferFrom(address(this), msg.sender, nftId);
     }
 
-    function claimFund(address _nftAddress, uint256 _nftId) external {
-        Order storage order = orders[id(_nftAddress, _nftId)];
+    /**
+     * @dev See {IRentalContract-claimFund}.
+     */
+    function claimFund(address nftAddress, uint256 nftId) external {
+        Order storage order = orders[id(nftAddress, nftId)];
         require(
-            order._lenderClaimed == false,
+            order.lenderClaimed == false,
             "order fund already claimed"
         );
         require(
-            msg.sender == order._lender,
+            msg.sender == order.lender,
             "only lender can claim the funds and nft from this order"
         );
         require(
-            order._rentedAt + order._duration * DAY_IN_SECONDS <=
+            order.rentedAt + order.duration * DAY_IN_SECONDS <=
                 uint32(block.timestamp),
             "rent duration not exceeded"
         );
-        order._lenderClaimed = true;
-        uint256 fund = order._count * order._countPrice;
-        token.safeTransfer(msg.sender, fund);
-        IERC721(_nftAddress).transferFrom(address(this), msg.sender, _nftId);
+        order.lenderClaimed = true;
+        uint256 fund = order.count * order.countPrice;
+        _token.safeTransfer(msg.sender, fund);
+        IERC721(nftAddress).transferFrom(address(this), msg.sender, nftId);
     }
 
-    function claimRefund(address _nftAddress, uint256 _nftId) external {
-        Order storage order = orders[id(_nftAddress, _nftId)];
+    /**
+     * @dev See {IRentalContract-claimRefund}.
+     */
+    function claimRefund(address nftAddress, uint256 nftId) external {
+        Order storage order = orders[id(nftAddress, nftId)];
         require(
-            order._renterClaimed == false,
+            order.renterClaimed == false,
             "order refund already claimed"
         );
         require(
-            msg.sender == order._renter,
+            msg.sender == order.renter,
             "only renter can claim refunds from this order"
         );
         require(
-            order._rentedAt + order._duration * DAY_IN_SECONDS <=
+            order.rentedAt + order.duration * DAY_IN_SECONDS <=
                 uint32(block.timestamp),
             "rent duration not exceeded"
         );
-        uint256 refund = order._maxCount *
-            order._countPrice -
-            order._count *
-            order._countPrice;
-        order._renterClaimed = true;
-        token.safeTransfer(msg.sender, refund);
+        uint256 refund = order.maxCount *
+            order.countPrice -
+            order.count *
+            order.countPrice;
+        order.renterClaimed = true;
+        _token.safeTransfer(msg.sender, refund);
     }
 
-    function increaseCount(address _nftAddress, uint256 _nftId)
+    /**
+     * @dev See {IRentalContract-increaseCount}.
+     */
+    function increaseCount(address nftAddress, uint256 nftId)
         external
         onlyImplementer
     {
-        Order storage order = orders[id(_nftAddress, _nftId)];
-        require(order._count <= order._maxCount, "max count is reached");
+        Order storage order = orders[id(nftAddress, nftId)];
+        require(order.count <= order.maxCount, "max count is reached");
         require(
-            order._rentedAt + order._duration * DAY_IN_SECONDS >
+            order.rentedAt + order.duration * DAY_IN_SECONDS >
                 uint32(block.timestamp),
             "rent duration exceeded"
         );
-        order._count++;
+        order.count++;
     }
 
-    function getOrder(address _nftAddress, uint256 _nftId)
+    /**
+     * Returns an order stored in the Rental Contract that is associated with a specific NFT.
+     *
+     * @param nftAddress Contains the account address of an ERC-721 token
+     * @param nftId Contains the tokenId of an ERC-721 token
+     * @return order object
+     */
+    function getOrder(address nftAddress, uint256 nftId)
         external
         view
         returns (Order memory)
     {
-        return orders[id(_nftAddress, _nftId)];
+        return orders[id(nftAddress, nftId)];
     }
 
-    function id(address _nftAddress, uint256 _nftId)
+    /**
+     * Returns an id generated with a keccak256 hash that is derived from the nftAddress and the nftId.
+     * This id is used to identify an order stored in the Rental Contract.
+     *
+     * @param nftAddress Contains the account address of an ERC-721 token
+     * @param nftId Contains the tokenId of an ERC-721 token
+     * @return id in bytes
+     */
+    function id(address nftAddress, uint256 nftId)
         private
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(_nftAddress, _nftId));
+        return keccak256(abi.encodePacked(nftAddress, nftId));
     }
 }
