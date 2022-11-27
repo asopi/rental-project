@@ -1,64 +1,107 @@
 <div class="dialog">
   <div class="dialog-left">
     <img [src]="data.image" [alt]="data.name" width="250" />
-    <div class="left-content">
-      <app-identicon [identity]="data.ownerAddress"></app-identicon>
-      <div class="left-content-title">{{ data.name }} #{{ data.tokenId }}</div>
+    <div class="dialog-left-content">
+      <div class="dialog-left-content-title">
+        <app-identicon
+          class="dialog-left-content-title-identicon"
+          [identity]="data.ownerAddress"
+        ></app-identicon>
+        <div class="dialog-left-content-title-text">{{ data.name }}</div>
+      </div>
+      <div class="dialog-left-content-sub-title">#{{ data.tokenId }}</div>
     </div>
-    <div class="left-content-description">
+    <div class="dialog-left-content-description">
       <p>{{ data.description }}</p>
     </div>
   </div>
   <div class="dialog-right">
-    <h1 mat-dialog-title>Rent this NFT</h1>
+    <div mat-dialog-title class="dialog-header">
+      <h1 class="dialog-title">Rent this NFT</h1>
+      <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <p>
-      Specify the maximum number of likes you are willing to pay and the
-      duration of your renting.
+      Specify a limit for the number of likes you are willing to pay and the
+      expiration date until you want to rent the NFT.
     </p>
     <form [formGroup]="rentingForm" (ngSubmit)="onSubmit()">
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Choose a date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="picker"
-            [min]="minDate"
-            [max]="maxDate"
-            formControlName="rentDate"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Max like count</mat-label>
-          <input type="number" matInput formControlName="maxLikeCount" />
-        </mat-form-field>
-      </div>
-      <div class="approval" *ngIf="!tokenApproved">
-        <p>Please give an approval to our Rental Contract in order to spend</p>
-        <div class="maxPrice">{{ maxRentPrice }} RNT</div>
-        <span>for this rental order.</span>
+      <div class="d-flex justify-content-sb">
         <div>
-          <button
-            mat-button
-            (click)="onApprove()"
-            [disabled]="maxRentPrice === 0"
-          >
-            Allow
-          </button>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Like limit</mat-label>
+            <input
+              type="number"
+              matInput
+              formControlName="maxLikeCount"
+              cdkFocusInitial
+            />
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Expiration date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [min]="minDate"
+              [max]="maxDate"
+              formControlName="rentDate"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
         </div>
       </div>
-      <div class="approval" *ngIf="tokenApproved">
-        <p>The Rental Contract is approved.</p>
+
+      <div class="price-section">
+        <div class="price-section-row d-flex justify-content-sb">
+          <div>Price per Like</div>
+          <div>
+            <span class="chip" *ngIf="maxCount > 0"> {{ maxCount }}x </span>
+            <span *ngIf="order != null">{{ order.countPrice }} RNT</span>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="price-section-row d-flex justify-content-sb bold">
+          <div>
+            Max. Rent Price
+            <mat-icon
+              class="info-icon"
+              matTooltip="You will pay all possible likes in advance, specified by your like limit. After the expiration, we calculate the final price by the number of likes received * price per like. You can then refund the remaining amount via the order table in the dashboard."
+              >info</mat-icon
+            >
+          </div>
+          <div class="d-flex center">{{ maxRentPrice }} RNT</div>
+        </div>
       </div>
-      <div mat-dialog-actions>
-        <button mat-button (click)="onCancle()">Cancle</button>
-        <button mat-button [disabled]="rentingForm.invalid || !tokenApproved">
+      <div class="approval">
+        <p *ngIf="!tokenApproved">
+          Before renting this NFT, you must allow our Rental Contract to perform
+          this order for you.
+        </p>
+        <p *ngIf="tokenApproved">
+          Our Rental Contract is already allowed to execute this order.
+        </p>
+      </div>
+      <div class="dialog-actions" mat-dialog-actions>
+        <button
+          mat-stroked-button
+          (click)="onApprove()"
+          [disabled]="maxRentPrice === 0 || tokenApproved"
+        >
+          Allow
+        </button>
+        <button
+          type="submit"
+          mat-flat-button
+          color="primary"
+          [disabled]="rentingForm.invalid || !tokenApproved"
+        >
           Rent
         </button>
       </div>

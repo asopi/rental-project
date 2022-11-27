@@ -1,6 +1,9 @@
 <div class="showroom">
-  <div class="lendings"></div>
-  <h1 class="lendable-title">Showroom</h1>
+  <div class="showroom-header">
+    <div class="showroom-title">Showroom</div>
+    <div>Enjoy our exhibition and give your favorites a like.</div>
+  </div>
+
   <div class="rentings">
     <div class="swiper-container">
       <swiper
@@ -22,13 +25,26 @@
         [slidesPerView]="'auto'"
         class="mySwiper"
       >
-        <ng-template swiperSlide *ngFor="let nft of nfts$ | async">
+        <ng-template swiperSlide *ngFor="let order of orders$ | async">
           <app-card
-            [nft]="nft"
-            [button]="'Like'"
+            [nft]="order.nft"
+            [identicon]="order.renter"
             (buttonClick)="likeClicked($event)"
           >
-          </app-card>
+            <div>
+              <button
+                mat-icon-button
+                color="accent"
+                (click)="likeClicked(order.nft)"
+                *ngIf="order.count == 0"
+              >
+                <mat-icon>favorite_border</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" *ngIf="order?.count != 0">
+                <mat-icon>favorite</mat-icon> {{ order?.count }}
+              </button>
+            </div></app-card
+          >
         </ng-template>
       </swiper>
       <div class="pagination"></div>

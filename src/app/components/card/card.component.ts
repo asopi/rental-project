@@ -11,6 +11,9 @@ export class CardComponent {
   public nft!: NFT;
 
   @Input()
+  public identicon!: string;
+
+  @Input()
   public button!: string;
 
   @Output()

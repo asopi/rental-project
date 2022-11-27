@@ -22,6 +22,7 @@ export class RentingDialogComponent implements OnDestroy {
   public tokenApproved = false;
   public order!: Order;
   public maxRentPrice = 0;
+  public maxCount = 0;
   private approvalSubscription!: Subscription;
   private orderSubscription!: Subscription;
   private maxLikeCountSubscription!: Subscription;
@@ -48,7 +49,8 @@ export class RentingDialogComponent implements OnDestroy {
     if (this.maxLikeCount != null) {
       this.maxLikeCountSubscription = this.maxLikeCount.valueChanges.subscribe(
         (value) => {
-          this.maxRentPrice = Number(value) * this.order.countPrice;
+          this.maxCount = Number(value);
+          this.maxRentPrice = this.maxCount * this.order.countPrice;
           this.approvalSubscription = from(
             this.rentalService.isTokenApproved(this.maxRentPrice)
           ).subscribe((response) => {
@@ -63,10 +65,6 @@ export class RentingDialogComponent implements OnDestroy {
     this.orderSubscription?.unsubscribe;
     this.approvalSubscription?.unsubscribe();
     this.maxLikeCountSubscription?.unsubscribe();
-  }
-
-  public onCancle(): void {
-    this.dialogRef.close();
   }
 
   public onApprove(): void {

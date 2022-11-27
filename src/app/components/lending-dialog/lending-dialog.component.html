@@ -1,59 +1,80 @@
 <div class="dialog">
   <div class="dialog-left">
     <img [src]="data.image" [alt]="data.name" width="250" />
-    <div class="left-content">
-      <app-identicon [identity]="data.ownerAddress"></app-identicon>
-      <div class="left-content-title">{{ data.name }} #{{ data.tokenId }}</div>
+    <div class="dialog-left-content">
+      <div class="dialog-left-content-title">
+        <app-identicon
+          class="dialog-left-content-title-identicon"
+          [identity]="data.ownerAddress"
+        ></app-identicon>
+        <div class="dialog-left-content-title-text">{{ data.name }}</div>
+      </div>
+      <div class="dialog-left-content-sub-title">#{{ data.tokenId }}</div>
     </div>
-    <div class="left-content-description">
+    <div class="dialog-left-content-description">
       <p>{{ data.description }}</p>
     </div>
   </div>
   <div class="dialog-right">
-    <h1 mat-dialog-title>Lend your NFT</h1>
+    <div mat-dialog-title class="dialog-header">
+      <h1 class="dialog-title">Lend your NFT</h1>
+      <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <p>
-      Specify the price you want to earn per like and the duration of your
+      Specify the price you want to earn per Like and a max. duration of your
       lending.
     </p>
     <form [formGroup]="lendingForm" (ngSubmit)="onSubmit()">
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Choose a date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="picker"
-            [min]="minDate"
-            formControlName="rentDate"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
+      <div class="d-flex justify-content-sb">
+        <div>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Price per like</mat-label>
+            <input
+              type="number"
+              matInput
+              formControlName="pricePerLike"
+              cdkFocusInitial
+            />
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Duration</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [min]="minDate"
+              formControlName="rentDate"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
       </div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Price per like</mat-label>
-          <input type="number" matInput formControlName="pricePerLike" />
-        </mat-form-field>
-      </div>
-      <div class="approval" *ngIf="!nftApproved">
-        <p>
+      <div class="approval">
+        <p *ngIf="!nftApproved">
           Please give an approval in order to move this NFT to our Rental
           Contract.
         </p>
-        <button mat-button (click)="onApprove()">Approve</button>
+        <p *ngIf="nftApproved">The Rental Contract is approved.</p>
       </div>
-      <div class="approval" *ngIf="nftApproved">
-        <p>The Rental Contract is approved.</p>
-      </div>
-
-      <div mat-dialog-actions>
-        <button mat-button (click)="onCancle()">Cancle</button>
+      <div class="dialog-actions" mat-dialog-actions>
+        <button
+          mat-stroked-button
+          (click)="onApprove()"
+          [disabled]="nftApproved"
+        >
+          Approve
+        </button>
         <button
           type="submit"
-          mat-button
+          mat-flat-button
+          color="primary"
           [disabled]="lendingForm.invalid || !nftApproved"
         >
           Lend

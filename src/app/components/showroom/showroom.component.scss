@@ -36,3 +36,14 @@
   justify-content: center;
   margin: 8px;
 }
+
+.showroom {
+  &-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  &-title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}

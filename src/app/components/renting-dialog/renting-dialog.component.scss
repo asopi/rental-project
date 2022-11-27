@@ -1,37 +1,23 @@
-.dialog {
-  display: flex;
+.chip {
+  display: inline-block;
+  padding: 0 8px;
+  margin: 0 8px;
+  border-radius: 32px;
+  background: #e0e0e0;
+  font-size: 13px;
+}
 
-  &-left {
-    padding-right: 24px;
-  }
-
-  &-right {
-    flex-grow: 1;
-  }
-
-  &-fields {
-    display: flex;
+.price-section {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  &-row {
+    padding: 8px;
   }
 }
 
-.left-content {
-  display: flex;
-  align-items: center;
-
-  &-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin: auto 8px;
-  }
-
-  &-description {
-    margin-top: 8px;
-  }
-}
-
-.maxPrice {
-  display: inline;
-  font-size: 24px;
-  font-weight: 600;
-  margin-right: 8px;
+.info-icon {
+  font-size: 20px;
+  height: unset;
+  color: #ff4081;
 }

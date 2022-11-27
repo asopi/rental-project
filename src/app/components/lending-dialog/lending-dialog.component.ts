@@ -54,10 +54,6 @@ export class LendingDialogComponent implements OnDestroy {
       });
   }
 
-  onCancle(): void {
-    this.dialogRef.close();
-  }
-
   public onSubmit() {
     if (
       this.data.tokenAddress != null &&

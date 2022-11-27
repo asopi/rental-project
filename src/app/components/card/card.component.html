@@ -1,14 +1,21 @@
 <mat-card class="card" *ngIf="nft">
   <mat-card-header>
     <div mat-card-avatar>
-      <app-identicon [height]="40" [width]="40" [identity]="nft.ownerAddress">
+      <app-identicon
+        [height]="40"
+        [width]="40"
+        [identity]="identicon != null ? identicon : nft.ownerAddress"
+      >
       </app-identicon>
     </div>
     <mat-card-title>{{ nft.name }} #{{ nft.tokenId }}</mat-card-title>
     <mat-card-subtitle>{{ nft.description }}</mat-card-subtitle>
   </mat-card-header>
   <img mat-card-image [src]="nft.image" [alt]="nft.name" />
-  <mat-card-actions *ngIf="button">
-    <button mat-button (click)="buttonClick.next(nft)">{{ button }}</button>
+  <mat-card-actions>
+    <button *ngIf="button" mat-button (click)="buttonClick.next(nft)">
+      {{ button }}
+    </button>
+    <ng-content></ng-content>
   </mat-card-actions>
 </mat-card>
