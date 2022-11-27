@@ -14,6 +14,4 @@ export class IdenticonComponent {
 
   @Input()
   public height: number = 36;
-
-  constructor() {}
 }

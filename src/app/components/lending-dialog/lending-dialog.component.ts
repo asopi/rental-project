@@ -46,7 +46,7 @@ export class LendingDialogComponent implements OnDestroy {
     this.approvalSubscription.unsubscribe();
   }
 
-  onApprove(): void {
+  public onApprove(): void {
     this.rentalService
       .approveNft(this.data.tokenAddress, this.data.tokenId)
       .then(() => {
@@ -54,7 +54,7 @@ export class LendingDialogComponent implements OnDestroy {
       });
   }
 
-  public onSubmit() {
+  public onSubmit(): void {
     if (
       this.data.tokenAddress != null &&
       this.data.tokenId != null &&

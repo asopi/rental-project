@@ -27,8 +27,6 @@ export class WalletService {
     .asObservable()
     .pipe(map((next) => (this.account = next)));
 
-  constructor(private readonly router: Router) {}
-
   public async init(): Promise<boolean> {
     const providerOptions = {
       walletconnect: {

@@ -18,6 +18,4 @@ export class CardComponent {
 
   @Output()
   public buttonClick: EventEmitter<NFT> = new EventEmitter<NFT>();
-
-  constructor() {}
 }

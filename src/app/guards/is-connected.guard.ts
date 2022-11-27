@@ -1,11 +1,9 @@
 import { WalletService } from '../services/wallet.service';
-import { RentalService } from 'src/app/services/rental.service';
 import { Injectable } from '@angular/core';
 import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
-  Router,
 } from '@angular/router';
 /**
  * The route guard where the user's permissions are checked before entering an authenticated view.
@@ -14,10 +12,7 @@ import {
  */
 @Injectable()
 export class IsConnectedGuard implements CanActivate {
-  constructor(
-    private readonly router: Router,
-    private readonly walletService: WalletService
-  ) {}
+  constructor(private readonly walletService: WalletService) {}
   /**
    * Run before a view using this route guard is entered.
    * @param next Contains the information about a route associated with a component loaded in an outlet at a particular moment in time.

@@ -9,8 +9,6 @@ export class LoadingService {
     false
   );
 
-  constructor() {}
-
   public setLoading(state: boolean): void {
     this.loading$.next(state);
   }

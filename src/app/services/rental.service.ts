@@ -20,7 +20,7 @@ export class RentalService {
     private readonly router: Router
   ) {}
 
-  public async approveNft(nftContract: string, nftId: number) {
+  public async approveNft(nftContract: string, nftId: number): Promise<void> {
     const contract = new this.walletService.web3.eth.Contract(
       nftAbi as AbiItem[],
       nftContract
@@ -256,7 +256,7 @@ export class RentalService {
     return `${amount * 10 ** 18}`;
   }
 
-  private toRNT(amount: number) {
+  private toRNT(amount: number): number {
     return amount / 10 ** 18;
   }
 }
