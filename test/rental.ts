@@ -4,7 +4,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { IERC20 } from './../typechain-types/@openzeppelin/contracts/token/ERC20/IERC20';
 import { time } from '@nomicfoundation/hardhat-network-helpers';
 
-describe('Rental', () => {
+describe('Rental Solution', () => {
   let rentalContract: any;
   let rentalToken: IERC20;
   let rentalNft: any;
@@ -131,6 +131,39 @@ describe('Rental', () => {
       expect(order._renter).to.equal(renter.address);
     });
 
+    it('should not execute rent transaction with a duration <= 0', async () => {
+      await expect(
+        rentalContract.connect(renter).rent(rentalNft.address, nftId, 0, 10)
+      ).to.be.revertedWith('duration is <= 0');
+    });
+
+    it('should not execute rent transaction with a max count <= 0', async () => {
+      await expect(
+        rentalContract.connect(renter).rent(rentalNft.address, nftId, 12, 0)
+      ).to.be.revertedWith('maxCount is <= 0');
+    });
+
+    it('should not execute rent transaction when renter has not enough balance', async () => {
+      let balance = await rentalToken.balanceOf(renter.address);
+      await rentalToken
+        .connect(renter)
+        .transfer(lender.address, Number(balance));
+      await rentalNft
+        .connect(lender)
+        .mint(
+          'https://ipfs.io/ipfs/QmVCUAhUNZNhyfnsu9EodNcXsvUf9fxKSSHJEnJrhRBNw1'
+        );
+      const nextNftId = nftId + 1;
+      await rentalNft
+        .connect(lender)
+        .approve(rentalContract.address, nextNftId);
+      await expect(
+        rentalContract
+          .connect(renter)
+          .rent(rentalNft.address, nextNftId, 12, 10)
+      ).to.be.revertedWith('not enough balance');
+    });
+
     it('should not execute rent transaction when nft is already rented', async () => {
       await expect(
         rentalContract.connect(renter).rent(rentalNft.address, nftId, 12, 10)
@@ -252,7 +285,19 @@ describe('Rental', () => {
       expect(order._lender).to.equal(lender.address);
     });
 
-    it('should not execute lend transaction when nft is already lended', async () => {
+    it('should not execute lend transaction with a duration <= 0', async () => {
+      await expect(
+        rentalContract.connect(lender).lend(rentalNft.address, nftId, 0, 10)
+      ).to.be.revertedWith('duration is <= 0');
+    });
+
+    it('should not execute lend transaction with a count price <= 0', async () => {
+      await expect(
+        rentalContract.connect(lender).lend(rentalNft.address, nftId, 12, 0)
+      ).to.be.revertedWith('countPrice is <= 0');
+    });
+
+    it('should not execute lend transaction when nft is already lent', async () => {
       await expect(
         rentalContract.connect(lender).lend(rentalNft.address, nftId, 12, 10)
       ).to.be.revertedWith('ERC721: transfer from incorrect owner');

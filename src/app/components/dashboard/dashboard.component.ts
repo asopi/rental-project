@@ -20,7 +20,7 @@ export class DashboardComponent {
   );
   public rentedNfts = 0;
   public rentableNfts = 0;
-  public lendedNfts = 0;
+  public lentNfts = 0;
   public openLendes = 0;
   public lendableNfts$ = this.nftService
     .loadAccountNfts()
@@ -77,7 +77,7 @@ export class DashboardComponent {
         order.renter === environment.NULL_ADDRESS &&
         order.lender !== this.walletService.account
     ).length;
-    this.lendedNfts = orders.filter(
+    this.lentNfts = orders.filter(
       (order) =>
         order.lender === this.account &&
         order.renter !== environment.NULL_ADDRESS

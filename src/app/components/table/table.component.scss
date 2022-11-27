@@ -15,7 +15,14 @@ table {
 
 ::ng-deep {
   td.mat-cell,
-  th.mat-cell {
+  th.mat-cell,
+  th.mat-header-cell {
     padding: 8px !important;
+  }
+
+  th.mat-header-cell:first-of-type,
+  td.mat-cell:first-of-type,
+  td.mat-footer-cell:first-of-type {
+    padding-left: 24px !important;
   }
 }
