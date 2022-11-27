@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('hardhat-gas-reporter');
 require('@nomiclabs/hardhat-etherscan');
 require('@nomiclabs/hardhat-ethers');
 require('@nomicfoundation/hardhat-toolbox');
@@ -15,5 +16,9 @@ module.exports = {
     apiKey: {
       goerli: process.env.ETHERSCAN_API_KEY,
     },
+  },
+  gasReporter: {
+    enabled: false,
+    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
 };
