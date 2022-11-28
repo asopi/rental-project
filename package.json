@@ -11,6 +11,7 @@
     "test": "ng test",
     "deploy-contract": "npx hardhat run scripts/deploy-goerli.ts --network goerli",
     "test-contract": "npx hardhat test",
+    "test-coverage": "npx hardhat coverage",
     "mint": "npx hardhat run scripts/mint-goerli.ts --network goerli"
   },
   "repository": {
