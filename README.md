@@ -90,11 +90,11 @@ If you have any feedback or questions, please contact me at alfred.sopi@hotmail.
 Use the following instructions to import your accounts to MetaMask.
 **NOTE: The Master Thesis submission includes Accounts that can be imported this way.**
 
-    1. Click on the MetaMask chrome extension and log in to your wallet
-    2. Click on your profile picture
-    3. Select `Import account`
-    4. Type in the private key of the Account you want to import
-    5. Click Import
+1. Click on the MetaMask chrome extension and log in to your wallet
+2. Click on your profile picture
+3. Select `Import account`
+4. Type in the private key of the Account you want to import
+5. Click Import
 
 ### MetaMask: Goerli Testnet Setup
 
