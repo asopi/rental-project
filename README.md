@@ -3,6 +3,11 @@
 This project contains the solution for my master thesis _(Renting NFTs with a pay-per-like pricing model)_.
 It provides a decentralized application (dapp) consisting of Solidity smart contracts and an Angular frontend for a new NFT rental system based on a novel pay-per-like pricing model.
 
+# Paper: 
+Implementing Smart Contracts: The case of NFT-rental with pay-per-like, Alfred Sopi, Johannes Schneider, Jan vom Brocke, 18th International Conference on Business Informatics (Wirtschaftsinformatik), 2023
+
+Paper Arxiv: https://arxiv.org/abs/2308.02424)
+
 ## Repository
 
 This repository contains smart contracts, deployment scripts, unit tests, and an Angular frontend stored in these folders:
